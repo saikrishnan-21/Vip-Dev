@@ -1,12 +1,79 @@
 # Cursor AI Configuration for VIPContentAI
 
-## Getting Started: Clone Repository
+## Getting Started
 
-To clone this development repository, run:
+### 1. Clone Repository
 
 ```bash
 git clone https://github.com/saikrishnan-21/Vip-Dev.git
 cd Vip-Dev
+```
+
+### 2. Setup Node.js (Frontend)
+
+```bash
+# Install dependencies
+npm install
+
+# Setup environment variables
+# Copy .env.example to .env.local and update values
+cp .env.example .env.local
+
+# Setup database (indexes and initial data)
+npm run db:setup
+
+# Start development server
+npm run dev
+```
+
+### 3. Setup Python (FastAPI Service)
+
+```bash
+cd api-service
+python -m venv .venv
+
+# Activate virtual environment
+# Windows (PowerShell):
+.venv\Scripts\Activate.ps1
+# Windows (CMD):
+.venv\Scripts\activate.bat
+# Linux/Mac:
+source .venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Start FastAPI server
+uvicorn main:app --reload --port 8000
+```
+
+## 🛠️ Troubleshooting
+
+If you encounter issues during installation or runtime, try these commands:
+
+### Resolve Node/Build Errors
+
+```bash
+# Clear Next.js cache and reinstall dependencies
+rm -rf .next
+rm -rf node_modules
+npm install
+```
+
+### Resolve Python Errors
+
+```bash
+# If dependencies are missing or broken, recreate the venv
+rm -rf .venv
+python -m venv .venv
+# Re-activate and install
+pip install -r requirements.txt
+```
+
+### Check Database Connection
+
+```bash
+npm run db:test
 ```
 
 This directory contains Cursor AI configuration to provide consistent development experience across the team for the dual-stack VIPContentAI project.
