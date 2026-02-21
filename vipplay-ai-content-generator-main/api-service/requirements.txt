@@ -1,0 +1,50 @@
+# FastAPI Core
+fastapi>=0.109.0
+uvicorn[standard]>=0.27.0
+python-multipart>=0.0.6
+
+# AI Framework
+# Note: kickoff_for_each_async requires crewai>=0.80.0
+crewai>=0.80.0
+crewai-tools>=0.17.0
+litellm>=1.80.0
+ollama>=0.1.0
+firecrawl-py
+# Data Validation
+pydantic>=2.5.0
+pydantic-settings>=2.1.0
+
+# Utilities
+python-dotenv>=1.0.0
+aiohttp>=3.9.0
+
+# Safety & Image Processing
+transformers>=4.35.0
+torch>=2.0.0
+Pillow>=10.0.0
+
+# Vector Database
+weaviate-client>=4.0.0
+
+# AWS S3
+boto3>=1.34.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+httpx>=0.25.0
+
+# Logging
+python-json-logger>=2.0.7
+
+# LLM Observability
+langfuse>=2.0.0
+
+# gRPC / Protobuf pinning to keep Weaviate happy
+protobuf>=5.26,<6.0
+grpcio<1.66
+grpcio-status<1.66
+
+# AWS S3 Storage
+boto3>=1.34.0

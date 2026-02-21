@@ -1,0 +1,376 @@
+---
+description: Next.js 16 + TypeScript frontend and backend configuration for VIPContentAI
+globs: ['app/**/*.{ts,tsx}', 'components/**/*.{ts,tsx}', 'lib/**/*.ts', 'hooks/**/*.ts']
+alwaysApply: true
+---
+
+# Next.js Stack Guidelines for VIPContentAI
+
+## Project Architecture
+
+This is a **Next.js 16** full-stack application using:
+- **App Router** (not Pages Router)
+- **TypeScript** (strict mode enabled)
+- **Tailwind CSS v4** with CSS variables
+- **shadcn/ui** components (New York style)
+- **MongoDB Atlas** for database
+- **JWT authentication** with bcrypt
+
+## Code Style & Standards
+
+### TypeScript
+- Always use **TypeScript**, never JavaScript
+- Enable strict mode (`strict: true`)
+- Use explicit return types for functions
+- Prefer `interface` over `type` for object shapes
+- Use `const` by default, `let` only when reassignment needed
+
+```typescript
+// Good
+interface UserProfile {
+  id: string;
+  email: string;
+  fullName: string;
+}
+
+async function getUser(id: string): Promise<UserProfile | null> {
+  // implementation
+}
+
+// Bad
+type UserProfile = { id, email, fullName }  // Missing types
+function getUser(id) { ... }  // Missing types and async
+```
+
+### React Components
+- Use **functional components** with hooks (no class components)
+- Client components: Add `"use client"` directive when using hooks, events, or browser APIs
+- Server components: Default (no directive needed) - use for data fetching
+- Prefer `async/await` in server components for data fetching
+
+```typescript
+// Server Component (default)
+async function UserList() {
+  const users = await db.collection('users').find().toArray();
+  return <div>{users.map(...)}</div>;
+}
+
+// Client Component
+"use client"
+import { useState } from 'react';
+
+function Counter() {
+  const [count, setCount] = useState(0);
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+}
+```
+
+### File Structure
+- **API Routes**: `app/api/[route]/route.ts`
+- **Page Components**: `app/[route]/page.tsx`
+- **Layout Components**: `app/[route]/layout.tsx`
+- **UI Components**: `components/ui/[component].tsx` (shadcn/ui)
+- **Custom Components**: `components/[component].tsx`
+- **Utilities**: `lib/[module].ts`
+- **Hooks**: `hooks/use-[name].ts`
+- **Types**: `lib/types/[domain].ts`
+- **Validations**: `lib/validations/[domain].ts` (Zod schemas)
+
+## API Route Patterns
+
+### Structure
+```typescript
+import { NextRequest, NextResponse } from 'next/server';
+import { withAuth } from '@/lib/auth/with-auth';
+import { db } from '@/lib/mongodb';
+
+// GET handler
+async function getHandler(req: NextRequest, context: { userId: string }) {
+  try {
+    const { userId } = context;
+    // Implementation
+    return NextResponse.json({ success: true, data });
+  } catch (error) {
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
+  }
+}
+
+// Export with middleware
+export const GET = withAuth(getHandler);
+```
+
+### Authentication
+- **Public routes**: No middleware, use `export const GET = handler`
+- **Protected routes**: Use `withAuth(handler)` wrapper
+- **Superadmin only**: Use `withSuperadmin(handler)` wrapper
+- JWT tokens stored in HTTP-only cookies
+
+### Status Codes
+- `200 OK`: Successful GET/PATCH/PUT
+- `201 Created`: Successful POST
+- `204 No Content`: Successful DELETE
+- `400 Bad Request`: Invalid input/validation errors
+- `401 Unauthorized`: Missing or invalid token
+- `403 Forbidden`: Insufficient permissions
+- `404 Not Found`: Resource doesn't exist
+- `500 Internal Server Error`: Server-side errors
+
+### Response Format
+```typescript
+// Success
+{ success: true, data: {...} }
+
+// Error
+{ success: false, error: "Error message", details?: {...} }
+
+// Paginated
+{
+  success: true,
+  data: [...],
+  pagination: {
+    page: 1,
+    limit: 20,
+    total: 100,
+    totalPages: 5
+  }
+}
+```
+
+## Database Patterns
+
+### MongoDB Connection
+```typescript
+import { db } from '@/lib/mongodb';
+
+// Always use the singleton connection
+const users = db.collection('users');
+```
+
+### Collections
+- `users` - User accounts and authentication
+- `sources` - RSS/website/topic/trend sources
+- `articles` - Captured articles with vector embeddings
+- `generated_content` - AI-generated content
+- `media` - Image/video library
+- `notifications` - User notifications
+- `ai_configurations` - Ollama model settings
+- `model_groups` - Model routing strategies
+
+### Query Patterns
+```typescript
+// Find with type safety
+const user = await db.collection<User>('users').findOne({ _id: new ObjectId(id) });
+
+// Update with timestamps
+await db.collection('users').updateOne(
+  { _id: userId },
+  {
+    $set: { ...updates, updatedAt: new Date() }
+  }
+);
+
+// Insert with defaults
+await db.collection('users').insertOne({
+  email,
+  passwordHash,
+  role: 'user',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  preferences: { /* defaults */ }
+});
+```
+
+## Validation with Zod
+
+Always validate input with Zod schemas:
+
+```typescript
+import { z } from 'zod';
+
+const registerSchema = z.object({
+  email: z.string().email('Invalid email format'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
+  fullName: z.string().min(1, 'Full name is required')
+});
+
+// In route handler
+const body = await req.json();
+const validated = registerSchema.parse(body);  // Throws on error
+```
+
+## Styling with Tailwind
+
+### Utility-First Approach
+```tsx
+// Good
+<div className="flex items-center gap-4 rounded-lg border bg-card p-4">
+  <h2 className="text-lg font-semibold">Title</h2>
+</div>
+
+// Avoid inline styles
+<div style={{ display: 'flex', padding: '16px' }}>  // Bad
+```
+
+### Theme Variables
+Use CSS variables from `globals.css`:
+- `bg-background`, `bg-card`, `bg-primary`
+- `text-foreground`, `text-muted-foreground`
+- `border-border`, `border-input`
+
+### Responsive Design
+```tsx
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  {/* Mobile: 1 col, Tablet: 2 cols, Desktop: 3 cols */}
+</div>
+```
+
+## shadcn/ui Components
+
+### Import from local components
+```typescript
+import { Button } from '@/components/ui/button';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
+```
+
+### Usage Patterns
+```tsx
+// Buttons
+<Button variant="default">Primary</Button>
+<Button variant="secondary">Secondary</Button>
+<Button variant="outline">Outline</Button>
+<Button variant="ghost">Ghost</Button>
+<Button variant="destructive">Delete</Button>
+
+// Dialogs
+<Dialog open={open} onOpenChange={setOpen}>
+  <DialogContent>
+    <DialogHeader>
+      <DialogTitle>Title</DialogTitle>
+    </DialogHeader>
+    {/* Content */}
+  </DialogContent>
+</Dialog>
+```
+
+## Error Handling
+
+### Try-Catch in API Routes
+```typescript
+export const GET = withAuth(async (req, context) => {
+  try {
+    // Business logic
+    return NextResponse.json({ success: true, data });
+  } catch (error) {
+    console.error('[API_ERROR]', error);
+    return NextResponse.json(
+      { success: false, error: error.message },
+      { status: 500 }
+    );
+  }
+});
+```
+
+### Client-Side Error Boundaries
+```tsx
+"use client"
+import { useEffect } from 'react';
+
+export default function Error({
+  error,
+  reset,
+}: {
+  error: Error;
+  reset: () => void;
+}) {
+  useEffect(() => {
+    console.error(error);
+  }, [error]);
+
+  return (
+    <div>
+      <h2>Something went wrong!</h2>
+      <button onClick={reset}>Try again</button>
+    </div>
+  );
+}
+```
+
+## Security Best Practices
+
+### Input Validation
+- Always validate with Zod schemas
+- Sanitize user input
+- Use parameterized queries (MongoDB prevents injection by default)
+
+### Authentication
+- Store JWT in HTTP-only cookies
+- Verify token on every protected route
+- Hash passwords with bcrypt (12 rounds minimum)
+- Never return password hashes to clients
+
+### CSRF Protection
+- Use `lib/middleware/security.ts` for CSRF tokens
+- Validate Origin/Referer headers
+
+### Rate Limiting
+- Apply rate limits to auth endpoints
+- Default: 100 requests per 15 minutes per IP
+
+## Testing Patterns
+
+Test files in `.stories/**/.tests/*.md` use Gherkin syntax:
+
+```gherkin
+Scenario: User can register with valid data
+  Given I have valid registration data
+  When I POST to "/api/auth/register"
+  Then the response status should be 201
+  And the response should contain "userId"
+```
+
+## Common Pitfalls to Avoid
+
+❌ **Don't use Pages Router patterns** (pages/api/*)
+✅ Use App Router (app/api/*)
+
+❌ **Don't fetch data in client components**
+✅ Use server components or SWR/TanStack Query
+
+❌ **Don't use CSS-in-JS**
+✅ Use Tailwind utility classes
+
+❌ **Don't export multiple handlers from one route**
+✅ One file per HTTP method combination
+
+❌ **Don't use process.env directly in client components**
+✅ Use server-only environment variables
+
+## Path Aliases
+
+Always use path aliases from `tsconfig.json`:
+```typescript
+import { Button } from '@/components/ui/button';  // ✅
+import { db } from '@/lib/mongodb';  // ✅
+
+// Don't use relative paths
+import { Button } from '../../../components/ui/button';  // ❌
+```
+
+## Documentation References
+
+- Next.js: https://nextjs.org/docs
+- TypeScript: https://www.typescriptlang.org/docs
+- Tailwind: https://tailwindcss.com/docs
+- shadcn/ui: https://ui.shadcn.com
+- Zod: https://zod.dev
+
+## Project-Specific Notes
+
+- This is a **monorepo** with FastAPI microservice in `api-service/`
+- All AI operations delegated to FastAPI, not Next.js
+- MongoDB Atlas cluster: `andy-cluster-personal.5zbgd4r.mongodb.net`
+- Database name: `vipcontentai`
+- See `CLAUDE.md` for comprehensive project context

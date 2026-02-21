@@ -1,0 +1,1041 @@
+---
+description: FastAPI + Python AI microservice configuration for VIPContentAI
+globs: ['**/*.py']
+alwaysApply: true
+---
+
+# FastAPI AI Microservice Guidelines for VIPContentAI
+
+## Project Architecture
+
+This is a **FastAPI microservice** dedicated to AI operations using:
+- **Python 3.10+** (minimum version)
+- **FastAPI 0.109.0+** web framework
+- **CrewAI 0.1.0+** for multi-agent workflows
+- **Ollama** for local LLM inference (NO cloud providers)
+- **Pydantic v2.5.0+** for data validation
+- **Uvicorn** ASGI server with standard extras
+- **httpx** for async HTTP requests
+- **python-dotenv** for environment management
+
+## Service Responsibilities
+
+✅ **This service handles:**
+- AI content generation (topic, keywords, trends, spin)
+- CrewAI agent orchestration (researcher, writer, optimizer)
+- Ollama model communication
+- SEO analysis and readability scoring
+- Vector embeddings generation
+
+❌ **This service does NOT handle:**
+- User authentication (handled by Next.js)
+- Database operations (handled by Next.js)
+- File uploads (handled by Next.js)
+- Frontend rendering (handled by Next.js)
+
+## Code Style & Standards
+
+### Python Style Guide
+- Follow **PEP 8** conventions
+- Use **type hints** for all function parameters and returns
+- Prefer `async/await` for I/O operations
+- Use **f-strings** for string formatting
+- Keep line length **≤ 100 characters**
+
+```python
+# Good
+async def generate_content(
+    topic: str,
+    word_count: int = 1500,
+    tone: str = "professional"
+) -> Dict[str, Any]:
+    """Generate AI content based on topic."""
+    result = await ai_service.generate(topic)
+    return {"content": result, "word_count": len(result.split())}
+
+# Bad
+def generate_content(topic, word_count=1500, tone="professional"):  # Missing types
+    result = ai_service.generate(topic)  # Not async
+    return dict(content=result, word_count=len(result.split()))  # Dict() instead of {}
+```
+
+### File Structure
+```
+api-service/
+├── main.py              # FastAPI app entry point
+├── routers/             # API route handlers
+│   ├── generation.py    # Content generation endpoints
+│   └── embeddings.py    # Vector embedding endpoints
+├── agents/              # CrewAI agent definitions
+│   ├── researcher.py    # Research agent
+│   ├── writer.py        # Writing agent
+│   └── seo_optimizer.py # SEO optimization agent
+├── services/            # Business logic
+│   ├── ollama_service.py       # Ollama API client
+│   ├── seo_analyzer.py         # SEO scoring
+│   └── readability_analyzer.py # Readability metrics
+├── models/              # Pydantic models
+│   ├── request.py       # Request schemas
+│   └── response.py      # Response schemas
+└── requirements.txt     # Python dependencies
+```
+
+## FastAPI Patterns
+
+### Router Structure
+```python
+from fastapi import APIRouter, HTTPException, BackgroundTasks
+from pydantic import BaseModel
+from typing import Optional
+
+router = APIRouter(prefix="/api/generation", tags=["generation"])
+
+class GenerationRequest(BaseModel):
+    topic: str
+    word_count: int = 1500
+    tone: str = "professional"
+    include_seo: bool = True
+
+class GenerationResponse(BaseModel):
+    content: str
+    word_count: int
+    seo_score: Optional[float] = None
+    readability_score: Optional[float] = None
+
+@router.post("/", response_model=GenerationResponse)
+async def generate_content(request: GenerationRequest) -> GenerationResponse:
+    """Generate AI content based on topic."""
+    try:
+        # Business logic
+        return GenerationResponse(content=content, word_count=count)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+```
+
+### Dependency Injection
+```python
+from fastapi import Depends
+from typing import Annotated
+
+async def get_ollama_service() -> OllamaService:
+    """Dependency: Ollama service instance."""
+    return OllamaService(base_url="http://localhost:11434")
+
+@router.post("/generate")
+async def generate(
+    request: GenerationRequest,
+    ollama: Annotated[OllamaService, Depends(get_ollama_service)]
+) -> GenerationResponse:
+    result = await ollama.generate(request.topic)
+    return GenerationResponse(content=result)
+```
+
+### Background Tasks
+```python
+@router.post("/bulk")
+async def bulk_generate(
+    requests: List[GenerationRequest],
+    background_tasks: BackgroundTasks
+) -> Dict[str, str]:
+    """Queue bulk generation job."""
+    job_id = str(uuid.uuid4())
+    background_tasks.add_task(process_bulk_job, job_id, requests)
+    return {"job_id": job_id, "status": "queued"}
+```
+
+## Pydantic Models (v2)
+
+### Model Definitions
+```python
+from pydantic import BaseModel, Field, field_validator
+from typing import Optional, Literal
+from datetime import datetime
+
+class GenerationRequest(BaseModel):
+    topic: str = Field(..., min_length=3, max_length=200)
+    word_count: int = Field(1500, ge=100, le=5000)
+    tone: Literal["professional", "casual", "formal"] = "professional"
+
+    @field_validator('topic')
+    @classmethod
+    def validate_topic(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError('Topic cannot be empty')
+        return v.strip()
+
+class GenerationResponse(BaseModel):
+    content: str
+    word_count: int
+    generated_at: datetime = Field(default_factory=datetime.utcnow)
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "content": "Generated article...",
+                "word_count": 1500,
+                "generated_at": "2025-01-15T10:30:00Z"
+            }
+        }
+    }
+```
+
+### Model Validation
+```python
+# Automatic validation
+@router.post("/")
+async def create(request: GenerationRequest):
+    # request is automatically validated
+    pass
+
+# Manual validation
+try:
+    validated = GenerationRequest.model_validate(data)
+except ValidationError as e:
+    raise HTTPException(status_code=422, detail=e.errors())
+```
+
+## CrewAI Agent Patterns
+
+### Agent Definition
+```python
+from crewai import Agent, Task, Crew
+from langchain_ollama import ChatOllama
+
+# Initialize LLM (Ollama only)
+llm = ChatOllama(
+    model="llama3.1:8b",
+    base_url="http://localhost:11434",
+    temperature=0.7
+)
+
+# Define Agent
+researcher = Agent(
+    role="Content Researcher",
+    goal="Research comprehensive information about the topic",
+    backstory="Expert researcher with deep knowledge of fantasy football",
+    llm=llm,
+    verbose=True
+)
+
+writer = Agent(
+    role="Content Writer",
+    goal="Write engaging, SEO-optimized articles",
+    backstory="Professional sports writer with 10 years experience",
+    llm=llm,
+    verbose=True
+)
+
+# Define Task
+research_task = Task(
+    description="Research {topic} and gather key insights",
+    expected_output="Comprehensive research notes with sources",
+    agent=researcher
+)
+
+writing_task = Task(
+    description="Write a {word_count}-word article about {topic}",
+    expected_output="Well-structured article with SEO optimization",
+    agent=writer,
+    context=[research_task]  # Depends on research
+)
+
+# Create Crew
+crew = Crew(
+    agents=[researcher, writer],
+    tasks=[research_task, writing_task],
+    verbose=2
+)
+
+# Execute
+result = crew.kickoff(inputs={
+    "topic": "Fantasy Football Draft Strategies",
+    "word_count": 1500
+})
+```
+
+### Service Layer
+```python
+class ContentGenerationService:
+    """Service for AI content generation."""
+
+    def __init__(self, ollama_url: str = "http://localhost:11434"):
+        self.ollama_url = ollama_url
+        self.llm = ChatOllama(model="llama3.1:8b", base_url=ollama_url)
+
+    async def generate_from_topic(
+        self,
+        topic: str,
+        word_count: int = 1500,
+        tone: str = "professional"
+    ) -> Dict[str, Any]:
+        """Generate content using CrewAI agents."""
+
+        # Create agents
+        researcher = self._create_researcher()
+        writer = self._create_writer(tone)
+        seo_optimizer = self._create_seo_optimizer()
+
+        # Define tasks
+        tasks = [
+            Task(
+                description=f"Research {topic}",
+                expected_output="Research notes",
+                agent=researcher
+            ),
+            Task(
+                description=f"Write {word_count}-word article on {topic}",
+                expected_output="Article content",
+                agent=writer
+            ),
+            Task(
+                description="Optimize article for SEO",
+                expected_output="SEO-optimized content",
+                agent=seo_optimizer
+            )
+        ]
+
+        # Execute crew
+        crew = Crew(agents=[researcher, writer, seo_optimizer], tasks=tasks)
+        result = crew.kickoff(inputs={"topic": topic, "word_count": word_count})
+
+        return {
+            "content": result,
+            "word_count": len(result.split()),
+            "seo_score": await self._calculate_seo_score(result)
+        }
+```
+
+## Ollama Integration
+
+### Service Client
+```python
+import httpx
+from typing import Dict, Any, List
+
+class OllamaService:
+    """Client for Ollama API."""
+
+    def __init__(self, base_url: str = "http://localhost:11434"):
+        self.base_url = base_url
+        self.client = httpx.AsyncClient(timeout=300.0)
+
+    async def generate(
+        self,
+        model: str,
+        prompt: str,
+        options: Optional[Dict[str, Any]] = None
+    ) -> str:
+        """Generate completion from Ollama."""
+        response = await self.client.post(
+            f"{self.base_url}/api/generate",
+            json={
+                "model": model,
+                "prompt": prompt,
+                "stream": False,
+                "options": options or {}
+            }
+        )
+        response.raise_for_status()
+        return response.json()["response"]
+
+    async def embed(self, model: str, text: str) -> List[float]:
+        """Generate embeddings from Ollama."""
+        response = await self.client.post(
+            f"{self.base_url}/api/embeddings",
+            json={"model": model, "prompt": text}
+        )
+        response.raise_for_status()
+        return response.json()["embedding"]
+
+    async def list_models(self) -> List[Dict[str, Any]]:
+        """List available Ollama models."""
+        response = await self.client.get(f"{self.base_url}/api/tags")
+        response.raise_for_status()
+        return response.json()["models"]
+```
+
+### Recommended Models
+```python
+# Local Ollama models only (NO OpenAI, Anthropic, Google, etc.)
+MODELS = {
+    "fast": "llama3.1:8b",       # Quick generation
+    "quality": "llama3.1:70b",   # High-quality output
+    "embed": "nomic-embed-text"  # 768-dim embeddings
+}
+```
+
+## Error Handling
+
+### HTTPException Usage
+```python
+from fastapi import HTTPException
+
+@router.post("/")
+async def generate(request: GenerationRequest):
+    # Input validation (automatic via Pydantic)
+
+    # Business logic errors
+    if not await ollama_service.is_available():
+        raise HTTPException(
+            status_code=503,
+            detail="Ollama service unavailable"
+        )
+
+    # Not found
+    if model not in available_models:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Model '{model}' not found"
+        )
+
+    # Server errors
+    try:
+        result = await generate_content(request)
+        return result
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Generation failed: {str(e)}"
+        )
+```
+
+### Custom Exception Handlers
+```python
+from fastapi import Request
+from fastapi.responses import JSONResponse
+
+@app.exception_handler(OllamaServiceError)
+async def ollama_error_handler(request: Request, exc: OllamaServiceError):
+    return JSONResponse(
+        status_code=503,
+        content={"detail": "AI service temporarily unavailable"}
+    )
+```
+
+## Async Patterns
+
+### Concurrent Operations
+```python
+import asyncio
+
+async def process_bulk_generation(requests: List[GenerationRequest]):
+    """Process multiple requests concurrently."""
+    tasks = [generate_single(req) for req in requests]
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    return results
+
+async def generate_with_fallback(request: GenerationRequest):
+    """Try primary model, fallback to secondary."""
+    try:
+        return await generate_with_model(request, "llama3.1:70b")
+    except Exception:
+        return await generate_with_model(request, "llama3.1:8b")
+```
+
+## Testing
+
+### Pytest Fixtures
+```python
+import pytest
+from httpx import AsyncClient
+from main import app
+
+@pytest.fixture
+async def client():
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        yield ac
+
+@pytest.mark.asyncio
+async def test_generate_content(client):
+    response = await client.post(
+        "/api/generation/",
+        json={"topic": "Test Topic", "word_count": 500}
+    )
+    assert response.status_code == 200
+    assert "content" in response.json()
+```
+
+## Environment Variables
+
+```python
+from pydantic_settings import BaseSettings
+
+class Settings(BaseSettings):
+    ollama_url: str = "http://localhost:11434"
+    ollama_model_fast: str = "llama3.1:8b"
+    ollama_model_quality: str = "llama3.1:70b"
+    ollama_embed_model: str = "nomic-embed-text"
+    max_workers: int = 4
+
+    class Config:
+        env_file = ".env"
+
+settings = Settings()
+```
+
+## CORS Configuration
+
+```python
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Next.js dev server
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+```
+
+## Application Initialization
+
+### Main App Setup
+```python
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from dotenv import load_dotenv
+import logging
+import os
+
+# Load environment variables first
+load_dotenv()
+
+# Configure logging
+logging.basicConfig(
+    level=os.getenv("LOG_LEVEL", "INFO"),
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
+
+# Initialize FastAPI app
+app = FastAPI(
+    title="VIPContentAI AI Service",
+    description="AI microservice for content generation using CrewAI and Ollama",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc"
+)
+
+# Configure CORS
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000").split(",")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+```
+
+### Startup and Shutdown Events
+```python
+@app.on_event("startup")
+async def startup_event():
+    """Initialize services on startup"""
+    logger.info("Starting VIPContentAI AI Service")
+    logger.info(f"Ollama URL: {os.getenv('OLLAMA_BASE_URL')}")
+    logger.info(f"Default Model: {os.getenv('DEFAULT_MODEL')}")
+    
+    # Verify Ollama connection
+    try:
+        await ollama_service.check_health()
+        logger.info("Ollama connection verified")
+    except Exception as e:
+        logger.error(f"Ollama connection failed: {e}")
+
+@app.on_event("shutdown")
+async def shutdown_event():
+    """Cleanup on shutdown"""
+    logger.info("Shutting down VIPContentAI AI Service")
+    await ollama_service.close()  # Close HTTP clients
+```
+
+### Modern Lifespan Pattern (Recommended)
+```python
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Modern lifespan context manager"""
+    # Startup
+    logger.info("Starting VIPContentAI AI Service")
+    await ollama_service.initialize()
+    yield
+    # Shutdown
+    logger.info("Shutting down VIPContentAI AI Service")
+    await ollama_service.close()
+
+app = FastAPI(lifespan=lifespan)
+```
+
+### Health Check Endpoint
+```python
+@app.get("/health")
+async def health_check():
+    """Check service health and Ollama connection"""
+    try:
+        ollama_healthy = await ollama_service.check_health()
+        return {
+            "status": "healthy" if ollama_healthy else "degraded",
+            "service": "VIPContentAI AI Service",
+            "ollama_url": os.getenv("OLLAMA_BASE_URL"),
+            "ollama_connected": ollama_healthy
+        }
+    except Exception as e:
+        logger.error(f"Health check failed: {str(e)}")
+        raise HTTPException(status_code=503, detail=f"Service unhealthy: {str(e)}")
+```
+
+## Status Codes
+
+Use appropriate HTTP status codes consistently:
+
+- `200 OK`: Successful GET/PUT request
+- `201 Created`: Successful POST that creates a resource
+- `202 Accepted`: Request accepted for background processing
+- `204 No Content`: Successful DELETE
+- `400 Bad Request`: Invalid input/validation errors
+- `404 Not Found`: Resource doesn't exist
+- `422 Unprocessable Entity`: Pydantic validation failed
+- `500 Internal Server Error`: Server-side errors
+- `503 Service Unavailable`: Ollama service unavailable
+
+### Response Format
+```python
+# Success (200/201)
+{
+    "content": "Generated text...",
+    "word_count": 1500,
+    "metadata": {...}
+}
+
+# Background job (202)
+{
+    "job_id": "uuid-here",
+    "status": "processing",
+    "estimated_time": 60
+}
+
+# Error (4xx/5xx)
+{
+    "detail": "Error message"
+}
+
+# Validation error (422) - automatic from Pydantic
+{
+    "detail": [
+        {
+            "loc": ["body", "field_name"],
+            "msg": "Error message",
+            "type": "validation_error"
+        }
+    ]
+}
+```
+
+## Logging Patterns
+
+### Logger Setup
+```python
+import logging
+from pythonjsonlogger import jsonlogger
+
+# Get logger for module
+logger = logging.getLogger(__name__)
+
+# Structured logging (optional)
+logHandler = logging.StreamHandler()
+formatter = jsonlogger.JsonFormatter()
+logHandler.setFormatter(formatter)
+logger.addHandler(logHandler)
+```
+
+### Logging Levels
+```python
+# DEBUG - Detailed debugging information
+logger.debug(f"Processing request with params: {params}")
+
+# INFO - General informational messages
+logger.info("Content generation started")
+
+# WARNING - Warning messages for potential issues
+logger.warning(f"Model {model_name} response time slow: {duration}s")
+
+# ERROR - Error messages for failures
+logger.error(f"Failed to generate content: {str(e)}", exc_info=True)
+
+# CRITICAL - Critical errors requiring immediate attention
+logger.critical("Ollama service completely unavailable")
+```
+
+### Contextual Logging
+```python
+@router.post("/generate")
+async def generate(request: GenerationRequest):
+    request_id = str(uuid.uuid4())
+    logger.info(f"[{request_id}] Generation request received", extra={
+        "request_id": request_id,
+        "topic": request.topic,
+        "word_count": request.word_count
+    })
+    
+    try:
+        result = await service.generate(request)
+        logger.info(f"[{request_id}] Generation completed successfully")
+        return result
+    except Exception as e:
+        logger.error(f"[{request_id}] Generation failed: {str(e)}", exc_info=True)
+        raise
+```
+
+## Common Pitfalls to Avoid
+
+❌ **Don't use cloud LLM providers** (OpenAI, Anthropic, Google AI)
+✅ Use Ollama local models only
+
+❌ **Don't handle authentication in FastAPI**
+✅ Trust authentication from Next.js backend
+
+❌ **Don't use sync functions for I/O**
+✅ Use async/await for all I/O operations
+
+❌ **Don't store data in FastAPI**
+✅ Return results to Next.js for storage
+
+❌ **Don't use Pydantic v1 syntax**
+✅ Use Pydantic v2 (model_validate, model_config, etc.)
+
+❌ **Don't use print() for logging**
+✅ Use proper logging with logger
+
+❌ **Don't forget to close HTTP clients**
+✅ Use lifespan or shutdown events to cleanup
+
+❌ **Don't use blocking operations in async functions**
+✅ Use asyncio.to_thread() for CPU-bound tasks
+
+❌ **Don't ignore type hints**
+✅ Use type hints everywhere for better IDE support
+
+❌ **Don't use mutable default arguments**
+✅ Use None and initialize inside function
+
+## Running the Application
+
+### Development Mode
+```bash
+# From api-service directory
+cd api-service
+
+# Activate virtual environment
+source .venv/bin/activate  # Unix/Mac
+# or
+.venv\Scripts\activate  # Windows
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Run with hot reload
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+# Or using the main.py entry point
+python main.py
+```
+
+### Production Mode
+```bash
+# Run with production settings
+uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
+
+# With Gunicorn (recommended for production)
+gunicorn main:app --workers 4 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000
+```
+
+### Environment Variables
+Create `.env` file in `api-service/`:
+```bash
+# Ollama Configuration
+OLLAMA_BASE_URL=http://localhost:11434
+DEFAULT_MODEL=llama3.1:8b
+QUALITY_MODEL=llama3.1:70b
+EMBEDDING_MODEL=nomic-embed-text
+
+# Service Configuration
+API_HOST=0.0.0.0
+API_PORT=8000
+RELOAD=false
+LOG_LEVEL=INFO
+
+# CORS Configuration
+ALLOWED_ORIGINS=http://localhost:3000,http://localhost:3001
+
+# Worker Configuration
+MAX_WORKERS=4
+```
+
+## API Documentation
+
+FastAPI auto-generates interactive documentation:
+
+- **Swagger UI**: `http://localhost:8000/docs` - Interactive API testing
+- **ReDoc**: `http://localhost:8000/redoc` - Alternative documentation view
+- **OpenAPI JSON**: `http://localhost:8000/openapi.json` - Raw OpenAPI schema
+
+### Accessing Documentation
+1. Start the service: `uvicorn main:app --reload`
+2. Open browser: `http://localhost:8000/docs`
+3. Test endpoints directly in the Swagger UI
+4. View request/response schemas automatically
+
+## Testing Best Practices
+
+### Test Structure
+```python
+import pytest
+from httpx import AsyncClient
+from main import app
+
+@pytest.fixture
+async def async_client():
+    """Async HTTP client for testing"""
+    async with AsyncClient(app=app, base_url="http://test") as client:
+        yield client
+
+@pytest.mark.asyncio
+async def test_health_check(async_client):
+    """Test health check endpoint"""
+    response = await async_client.get("/health")
+    assert response.status_code == 200
+    assert response.json()["service"] == "VIPContentAI AI Service"
+
+@pytest.mark.asyncio
+async def test_generate_content_validation(async_client):
+    """Test Pydantic validation"""
+    # Missing required field
+    response = await async_client.post("/api/generation/", json={})
+    assert response.status_code == 422
+    
+    # Invalid field type
+    response = await async_client.post("/api/generation/", json={
+        "topic": "Test",
+        "word_count": "invalid"  # Should be int
+    })
+    assert response.status_code == 422
+```
+
+### Mocking External Services
+```python
+from unittest.mock import AsyncMock, patch
+
+@pytest.mark.asyncio
+async def test_generate_with_mock(async_client):
+    """Test with mocked Ollama service"""
+    with patch('services.ollama_service.OllamaService.generate') as mock_generate:
+        mock_generate.return_value = "Mocked content"
+        
+        response = await async_client.post("/api/generation/", json={
+            "topic": "Test Topic",
+            "word_count": 500
+        })
+        
+        assert response.status_code == 201
+        assert "content" in response.json()
+```
+
+## Performance Optimization
+
+### Async Best Practices
+```python
+# Good - Concurrent requests
+async def fetch_multiple_models():
+    """Fetch data from multiple models concurrently"""
+    results = await asyncio.gather(
+        ollama_service.generate(model="llama3.1:8b", prompt=prompt1),
+        ollama_service.generate(model="llama3.1:70b", prompt=prompt2),
+        return_exceptions=True
+    )
+    return results
+
+# Bad - Sequential requests
+async def fetch_multiple_models_slow():
+    """Sequential - slower"""
+    result1 = await ollama_service.generate(model="llama3.1:8b", prompt=prompt1)
+    result2 = await ollama_service.generate(model="llama3.1:70b", prompt=prompt2)
+    return [result1, result2]
+```
+
+### CPU-Bound Operations
+```python
+import asyncio
+from concurrent.futures import ProcessPoolExecutor
+
+# For CPU-intensive tasks (e.g., text processing)
+executor = ProcessPoolExecutor(max_workers=4)
+
+async def cpu_intensive_task(data: str) -> str:
+    """Run CPU-intensive task in separate process"""
+    loop = asyncio.get_event_loop()
+    result = await loop.run_in_executor(executor, process_text, data)
+    return result
+```
+
+### Connection Pooling
+```python
+import httpx
+
+# Good - Reuse client
+class OllamaService:
+    def __init__(self):
+        self.client = httpx.AsyncClient(
+            timeout=300.0,
+            limits=httpx.Limits(max_connections=100, max_keepalive_connections=20)
+        )
+    
+    async def close(self):
+        await self.client.aclose()
+
+# Bad - Create new client each time
+async def generate(prompt: str):
+    async with httpx.AsyncClient() as client:  # New client per request
+        response = await client.post(...)
+```
+
+## Security Best Practices
+
+### Input Sanitization
+```python
+from pydantic import validator, Field
+
+class ContentRequest(BaseModel):
+    topic: str = Field(..., min_length=3, max_length=200)
+    
+    @field_validator('topic')
+    @classmethod
+    def sanitize_topic(cls, v: str) -> str:
+        """Sanitize topic input"""
+        # Remove potential injection attempts
+        v = v.strip()
+        # Remove special characters if needed
+        # v = re.sub(r'[^\w\s-]', '', v)
+        return v
+```
+
+### Rate Limiting (Optional)
+```python
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
+
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+@app.post("/api/generation/")
+@limiter.limit("10/minute")
+async def generate(request: Request, gen_request: GenerationRequest):
+    """Rate-limited endpoint"""
+    pass
+```
+
+### Environment Variable Validation
+```python
+from pydantic_settings import BaseSettings
+from pydantic import HttpUrl, validator
+
+class Settings(BaseSettings):
+    ollama_base_url: HttpUrl = "http://localhost:11434"
+    api_host: str = "0.0.0.0"
+    api_port: int = 8000
+    allowed_origins: list[str] = ["http://localhost:3000"]
+    
+    @validator('api_port')
+    def validate_port(cls, v):
+        if not 1 <= v <= 65535:
+            raise ValueError('Port must be between 1 and 65535')
+        return v
+    
+    class Config:
+        env_file = ".env"
+        case_sensitive = False
+
+settings = Settings()
+```
+
+## Documentation References
+
+### Official Documentation
+- **FastAPI**: https://fastapi.tiangolo.com
+- **Pydantic v2**: https://docs.pydantic.dev/latest/
+- **CrewAI**: https://docs.crewai.com
+- **Ollama**: https://ollama.ai/docs
+- **Uvicorn**: https://www.uvicorn.org
+- **httpx**: https://www.python-httpx.org
+
+### Python Standards
+- **PEP 8**: https://pep8.org (Style Guide)
+- **PEP 484**: https://www.python.org/dev/peps/pep-0484/ (Type Hints)
+- **PEP 585**: https://www.python.org/dev/peps/pep-0585/ (Type Hinting Generics)
+
+### Testing
+- **pytest**: https://docs.pytest.org
+- **pytest-asyncio**: https://pytest-asyncio.readthedocs.io
+
+## Project-Specific Notes
+
+### Service Communication
+- This microservice is **called by Next.js backend only** (not directly by frontend)
+- Communication: `FASTAPI_AI_SERVICE_URL=http://localhost:8000`
+- All AI content generation happens in this service
+- Results returned to Next.js for MongoDB storage and user delivery
+
+### Data Flow
+```
+User Request → Next.js API Route → FastAPI Service → Ollama → FastAPI → Next.js → MongoDB → User Response
+```
+
+### Model Configuration
+Configured in `ai_configurations` collection (MongoDB):
+- Model routing strategies
+- Fallback models
+- Temperature and generation parameters
+- Token limits
+
+### Deployment
+- Deploy separately from Next.js app
+- Can scale independently
+- See `api-service/README.md` for deployment guide
+- See `DEPLOYMENT.md` in root for full deployment instructions
+
+### Available Endpoints
+See `api-service/README.md` for comprehensive endpoint documentation:
+- `/health` - Service health check
+- `/models` - List available Ollama models
+- `/api/generation/*` - Content generation endpoints
+- `/api/embeddings/*` - Vector embedding endpoints
+- `/docs` - Interactive API documentation
+
+### Best Practices Summary
+
+✅ **DO**:
+- Use async/await for all I/O operations
+- Add type hints to all functions
+- Validate input with Pydantic models
+- Use structured logging with context
+- Close HTTP clients in shutdown handlers
+- Test with pytest and AsyncClient
+- Use FastAPI dependency injection
+- Return appropriate HTTP status codes
+- Document endpoints with docstrings
+- Use Ollama local models only
+
+❌ **DON'T**:
+- Use cloud LLM providers (OpenAI, Anthropic, etc.)
+- Handle authentication (trust Next.js)
+- Store data in FastAPI (return to Next.js)
+- Use sync functions for I/O
+- Use print() for logging
+- Use Pydantic v1 syntax
+- Create new HTTP clients per request
+- Use blocking operations in async functions
+- Forget to add type hints
+- Use mutable default arguments

@@ -1,0 +1,585 @@
+name: Deploy Next.js + FastAPI to EC2 (Using GitHub Secrets)
+
+on:
+  push:
+    branches:
+      - stage
+
+jobs:
+  ########################################
+  # FRONTEND: Next.js Deployment
+  ########################################
+  frontend:
+    runs-on: [self-hosted, action-runner]
+    environment:
+      name: stage
+
+    env:
+      EC2_HOST: ${{ secrets.EC2_HOST }}
+      EC2_USER: ${{ secrets.EC2_USER }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Install frontend dependencies
+        run: |
+          pnpm install --frozen-lockfile || pnpm install --no-frozen-lockfile
+
+      - name: Create .env.production from GitHub Secrets
+        env:
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          MONGODB_DB_NAME: ${{ secrets.MONGODB_DB_NAME }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          JWT_ALGORITHM: ${{ secrets.JWT_ALGORITHM }}
+          JWT_EXPIRES_IN: ${{ secrets.JWT_EXPIRES_IN }}
+          BCRYPT_ROUNDS: ${{ secrets.BCRYPT_ROUNDS }}
+          FASTAPI_URL: ${{ secrets.FASTAPI_URL }}
+          FASTAPI_AI_SERVICE_URL: ${{ secrets.FASTAPI_AI_SERVICE_URL }}
+          OLLAMA_BASE_URL: ${{ secrets.OLLAMA_BASE_URL }}
+          OLLAMA_DEFAULT_MODEL: ${{ secrets.OLLAMA_DEFAULT_MODEL }}
+          OLLAMA_QUALITY_MODEL: ${{ secrets.OLLAMA_QUALITY_MODEL }}
+          EMBEDDING_MODEL: ${{ secrets.EMBEDDING_MODEL }}
+          RESEARCHER_MODEL: ${{ secrets.RESEARCHER_MODEL }}
+          WRITER_MODEL: ${{ secrets.WRITER_MODEL }}
+          SEO_MODEL: ${{ secrets.SEO_MODEL }}
+          HF_API_BASE_URL: ${{ secrets.HF_API_BASE_URL }}
+          WEAVIATE_URL: ${{ secrets.WEAVIATE_URL }}
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+          EMAIL_ENABLED: ${{ secrets.EMAIL_ENABLED }}
+          EMAIL_SERVICE: ${{ secrets.EMAIL_SERVICE }}
+          AWS_SES_REGION: ${{ secrets.AWS_SES_REGION }}
+          AWS_SES_FROM_EMAIL: ${{ secrets.AWS_SES_FROM_EMAIL }}
+          AWS_SES_FROM_NAME: ${{ secrets.AWS_SES_FROM_NAME }}
+          AWS_SES_VERIFIED_EMAILS: ${{ secrets.AWS_SES_VERIFIED_EMAILS }}
+          STORAGE_TYPE: ${{ secrets.STORAGE_TYPE }}
+          UPLOAD_DIR: ${{ secrets.UPLOAD_DIR }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+          S3_FOLDER_PREFIX: ${{ secrets.S3_FOLDER_PREFIX }}
+          CORS_ORIGIN: ${{ secrets.CORS_ORIGIN }}
+          ALLOWED_HOSTS: ${{ secrets.ALLOWED_HOSTS }}
+          RATE_LIMIT_ENABLED: ${{ secrets.RATE_LIMIT_ENABLED }}
+          RATE_LIMIT_WINDOW_MS: ${{ secrets.RATE_LIMIT_WINDOW_MS }}
+          RATE_LIMIT_MAX_REQUESTS: ${{ secrets.RATE_LIMIT_MAX_REQUESTS }}
+          LOG_LEVEL: ${{ secrets.LOG_LEVEL }}
+          ENABLE_MONITORING: ${{ secrets.ENABLE_MONITORING }}
+          FEATURE_AI_IMAGE_GEN: ${{ secrets.FEATURE_AI_IMAGE_GEN }}
+          FEATURE_BULK_EXPORT: ${{ secrets.FEATURE_BULK_EXPORT }}
+          FEATURE_EMAIL_NOTIFICATIONS: ${{ secrets.FEATURE_EMAIL_NOTIFICATIONS }}
+          ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+          MAX_TOKENS: ${{ secrets.MAX_TOKENS }}
+          TEMPERATURE: ${{ secrets.TEMPERATURE }}
+          TOP_P: ${{ secrets.TOP_P }}
+          FREQUENCY_PENALTY: ${{ secrets.FREQUENCY_PENALTY }}
+          PRESENCE_PENALTY: ${{ secrets.PRESENCE_PENALTY }}
+          HF_DEFAULT_IMAGE_MODEL: ${{ secrets.HF_DEFAULT_IMAGE_MODEL }}
+          HF_DEFAULT_VIDEO_MODEL: ${{ secrets.HF_DEFAULT_VIDEO_MODEL }}
+          HF_DEFAULT_INFERENCE_STEPS: ${{ secrets.HF_DEFAULT_INFERENCE_STEPS }}
+          HF_DEFAULT_GUIDANCE_SCALE: ${{ secrets.HF_DEFAULT_GUIDANCE_SCALE }}
+          HF_DEFAULT_VIDEO_FRAMES: ${{ secrets.HF_DEFAULT_VIDEO_FRAMES }}
+          NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+          QUEUE_PREFIX: ${{ secrets.QUEUE_PREFIX }}
+          USE_FIFO: ${{ secrets.USE_FIFO }}
+          ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}
+          SQS_QUEUE_URL: ${{ secrets.SQS_QUEUE_URL }}
+          SQS_ARTICLES_QUEUE_URL: ${{ secrets.SQS_ARTICLES_QUEUE_URL }}
+          SQS_IMAGE_QUEUE_URL: ${{ secrets.SQS_IMAGE_QUEUE_URL }}
+          SQS_VIDEO_QUEUE_URL: ${{ secrets.SQS_VIDEO_QUEUE_URL }}
+          LANGFUSE_ENABLED: ${{ secrets.LANGFUSE_ENABLED }}
+          LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+          LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
+          LANGFUSE_HOST: ${{ secrets.LANGFUSE_HOST }}
+        run: |
+          echo "🔐 Creating .env.production from GitHub Secrets"
+
+          cat > .env.production << 'EOF'
+          NODE_ENV=production
+          PORT=3000
+          HOSTNAME=0.0.0.0
+          EOF
+
+          add_env_var() {
+            local var_name=$1
+            local var_value=$2
+            if [ -n "$var_value" ]; then
+              echo "${var_name}=${var_value}" >> .env.production
+              echo "  ✅ Added ${var_name}"
+            fi
+          }
+
+          add_env_var "MONGODB_URI" "$MONGODB_URI"
+          add_env_var "MONGODB_DB_NAME" "$MONGODB_DB_NAME"
+          add_env_var "JWT_SECRET" "$JWT_SECRET"
+          add_env_var "JWT_ALGORITHM" "$JWT_ALGORITHM"
+          add_env_var "JWT_EXPIRES_IN" "$JWT_EXPIRES_IN"
+          add_env_var "BCRYPT_ROUNDS" "$BCRYPT_ROUNDS"
+          add_env_var "FASTAPI_URL" "$FASTAPI_URL"
+          add_env_var "FASTAPI_AI_SERVICE_URL" "$FASTAPI_AI_SERVICE_URL"
+          add_env_var "OLLAMA_BASE_URL" "$OLLAMA_BASE_URL"
+          add_env_var "OLLAMA_DEFAULT_MODEL" "$OLLAMA_DEFAULT_MODEL"
+          add_env_var "OLLAMA_QUALITY_MODEL" "$OLLAMA_QUALITY_MODEL"
+          add_env_var "EMBEDDING_MODEL" "$EMBEDDING_MODEL"
+          add_env_var "RESEARCHER_MODEL" "$RESEARCHER_MODEL"
+          add_env_var "WRITER_MODEL" "$WRITER_MODEL"
+          add_env_var "SEO_MODEL" "$SEO_MODEL"
+          add_env_var "HF_API_BASE_URL" "$HF_API_BASE_URL"
+          add_env_var "WEAVIATE_URL" "$WEAVIATE_URL"
+          add_env_var "FIRECRAWL_API_KEY" "$FIRECRAWL_API_KEY"
+          add_env_var "EMAIL_ENABLED" "$EMAIL_ENABLED"
+          add_env_var "EMAIL_SERVICE" "$EMAIL_SERVICE"
+          add_env_var "AWS_SES_REGION" "$AWS_SES_REGION"
+          add_env_var "AWS_SES_FROM_EMAIL" "$AWS_SES_FROM_EMAIL"
+          add_env_var "AWS_SES_FROM_NAME" "$AWS_SES_FROM_NAME"
+          add_env_var "AWS_SES_VERIFIED_EMAILS" "$AWS_SES_VERIFIED_EMAILS"
+          add_env_var "STORAGE_TYPE" "$STORAGE_TYPE"
+          add_env_var "UPLOAD_DIR" "$UPLOAD_DIR"
+          add_env_var "AWS_ACCESS_KEY_ID" "$AWS_ACCESS_KEY_ID"
+          add_env_var "AWS_SECRET_ACCESS_KEY" "$AWS_SECRET_ACCESS_KEY"
+          add_env_var "AWS_REGION" "$AWS_REGION"
+          add_env_var "S3_BUCKET_NAME" "$S3_BUCKET_NAME"
+          add_env_var "S3_FOLDER_PREFIX" "$S3_FOLDER_PREFIX"
+          add_env_var "CORS_ORIGIN" "$CORS_ORIGIN"
+          add_env_var "ALLOWED_HOSTS" "$ALLOWED_HOSTS"
+          add_env_var "RATE_LIMIT_ENABLED" "$RATE_LIMIT_ENABLED"
+          add_env_var "RATE_LIMIT_WINDOW_MS" "$RATE_LIMIT_WINDOW_MS"
+          add_env_var "RATE_LIMIT_MAX_REQUESTS" "$RATE_LIMIT_MAX_REQUESTS"
+          add_env_var "LOG_LEVEL" "$LOG_LEVEL"
+          add_env_var "ENABLE_MONITORING" "$ENABLE_MONITORING"
+          add_env_var "FEATURE_AI_IMAGE_GEN" "$FEATURE_AI_IMAGE_GEN"
+          add_env_var "FEATURE_BULK_EXPORT" "$FEATURE_BULK_EXPORT"
+          add_env_var "FEATURE_EMAIL_NOTIFICATIONS" "$FEATURE_EMAIL_NOTIFICATIONS"
+          add_env_var "ALLOWED_ORIGINS" "$ALLOWED_ORIGINS"
+          add_env_var "MAX_TOKENS" "$MAX_TOKENS"
+          add_env_var "TEMPERATURE" "$TEMPERATURE"
+          add_env_var "TOP_P" "$TOP_P"
+          add_env_var "FREQUENCY_PENALTY" "$FREQUENCY_PENALTY"
+          add_env_var "PRESENCE_PENALTY" "$PRESENCE_PENALTY"
+          add_env_var "HF_DEFAULT_IMAGE_MODEL" "$HF_DEFAULT_IMAGE_MODEL"
+          add_env_var "HF_DEFAULT_VIDEO_MODEL" "$HF_DEFAULT_VIDEO_MODEL"
+          add_env_var "HF_DEFAULT_INFERENCE_STEPS" "$HF_DEFAULT_INFERENCE_STEPS"
+          add_env_var "HF_DEFAULT_GUIDANCE_SCALE" "$HF_DEFAULT_GUIDANCE_SCALE"
+          add_env_var "HF_DEFAULT_VIDEO_FRAMES" "$HF_DEFAULT_VIDEO_FRAMES"
+          add_env_var "NEXT_PUBLIC_APP_URL" "$NEXT_PUBLIC_APP_URL"
+          add_env_var "QUEUE_PREFIX" "$QUEUE_PREFIX"
+          add_env_var "USE_FIFO" "$USE_FIFO"
+          add_env_var "ACCOUNT_ID" "$ACCOUNT_ID"
+          add_env_var "SQS_QUEUE_URL" "$SQS_QUEUE_URL"
+          add_env_var "SQS_ARTICLES_QUEUE_URL" "$SQS_ARTICLES_QUEUE_URL"
+          add_env_var "SQS_IMAGE_QUEUE_URL" "$SQS_IMAGE_QUEUE_URL"
+          add_env_var "SQS_VIDEO_QUEUE_URL" "$SQS_VIDEO_QUEUE_URL"
+          add_env_var "LANGFUSE_ENABLED" "$LANGFUSE_ENABLED"
+          add_env_var "LANGFUSE_PUBLIC_KEY" "$LANGFUSE_PUBLIC_KEY"
+          add_env_var "LANGFUSE_SECRET_KEY" "$LANGFUSE_SECRET_KEY"
+          add_env_var "LANGFUSE_HOST" "$LANGFUSE_HOST"
+
+      - name: Build Next.js
+        run: pnpm run build
+
+      - name: Archive frontend build
+        run: |
+          tar -czf frontend.tar.gz \
+            .next public package.json pnpm-lock.yaml .env.production \
+            lib ecosystem.config.js
+
+      - name: Add SSH key
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > ec2_key.pem
+          chmod 600 ec2_key.pem
+
+      - name: Copy frontend to EC2
+        run: |
+          scp -i ec2_key.pem -o StrictHostKeyChecking=no \
+            frontend.tar.gz \
+            "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/frontend.tar.gz"
+
+      - name: Deploy frontend to EC2 (hard-coded path)
+        run: |
+          ssh -i ec2_key.pem -o StrictHostKeyChecking=no \
+            "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}" << 'EOF'
+          set -euo pipefail
+
+          EC2_FRONTEND_PATH="/var/www/vipcontentai-frontend"
+
+          echo "📌 Using EC2_FRONTEND_PATH: $EC2_FRONTEND_PATH"
+          mkdir -p "$EC2_FRONTEND_PATH"
+          cd "$EC2_FRONTEND_PATH"
+          echo "📂 CWD: $(pwd)"
+
+          echo "🧹 Wiping directory contents..."
+          shopt -s dotglob
+          rm -rf ./*
+          shopt -u dotglob
+
+          echo "📂 After wipe:"
+          ls -la
+
+          TMP_DIR="/tmp/frontend_unpacked_$$"
+          mkdir -p "$TMP_DIR"
+          tar -xzf ~/frontend.tar.gz -C "$TMP_DIR"
+
+          cp -r "$TMP_DIR/.next" .
+          cp -r "$TMP_DIR/public" .
+          cp -f "$TMP_DIR/package.json" .
+          cp -f "$TMP_DIR/pnpm-lock.yaml" .
+          cp -f "$TMP_DIR/.env.production" .
+          
+          # Copy lib directory and ecosystem.config.js for SQS worker
+          if [ -d "$TMP_DIR/lib" ]; then
+            cp -r "$TMP_DIR/lib" .
+            echo "✅ Copied lib directory for SQS worker"
+          fi
+          if [ -f "$TMP_DIR/ecosystem.config.js" ]; then
+            cp -f "$TMP_DIR/ecosystem.config.js" .
+            echo "✅ Copied ecosystem.config.js"
+          fi
+
+          rm -rf "$TMP_DIR"
+          rm -f ~/frontend.tar.gz
+
+          echo "📂 After copying new build:"
+          ls -la
+
+          # Ensure pnpm
+          if ! command -v pnpm >/dev/null; then
+            if command -v sudo >/dev/null 2>&1; then
+              sudo npm install -g pnpm
+            else
+              npm install -g pnpm
+            fi
+          fi
+
+          # Ensure PM2
+          if ! command -v pm2 >/dev/null; then
+            echo "Installing PM2..."
+            if command -v sudo >/dev/null 2>&1; then
+              sudo npm install -g pm2
+            else
+              mkdir -p ~/.npm-global
+              npm config set prefix ~/.npm-global
+              export PATH=~/.npm-global/bin:$PATH
+              npm install -g pm2
+            fi
+          fi
+
+          if [ -d ~/.npm-global/bin ] && [[ ":$PATH:" != *":$HOME/.npm-global/bin:"* ]]; then
+            export PATH=~/.npm-global/bin:$PATH
+          fi
+
+          echo "📦 Installing production dependencies..."
+          rm -rf node_modules
+          pnpm install --prod --frozen-lockfile
+
+          echo "🔁 Restarting via PM2..."
+          PM2_CMD="pm2"
+          if ! command -v pm2 >/dev/null 2>&1; then
+            if [ -f ~/.npm-global/bin/pm2 ]; then
+              PM2_CMD=~/.npm-global/bin/pm2
+            elif [ -f /usr/local/bin/pm2 ]; then
+              PM2_CMD=/usr/local/bin/pm2
+            fi
+          fi
+
+          $PM2_CMD delete vipcontentai-frontend || true
+          $PM2_CMD start npm --name vipcontentai-frontend -- start
+          $PM2_CMD save
+
+          echo "📂 Final contents:"
+          ls -la
+
+          echo "✅ Frontend deployment completed."
+          EOF
+
+  ########################################
+  # BACKEND: FastAPI Deployment
+  ########################################
+  backend:
+    runs-on: [self-hosted, action-runner]
+    needs: frontend
+    environment:
+      name: stage
+
+    env:
+      EC2_HOST: ${{ secrets.EC2_HOST }}
+      EC2_USER: ${{ secrets.EC2_USER }}
+      EC2_BACKEND_PATH: ${{ secrets.EC2_BACKEND_PATH }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create backend .env from GitHub Secrets
+        env:
+          OLLAMA_BASE_URL: ${{ secrets.OLLAMA_BASE_URL }}
+          OLLAMA_DEFAULT_MODEL: ${{ secrets.OLLAMA_DEFAULT_MODEL }}
+          OLLAMA_QUALITY_MODEL: ${{ secrets.OLLAMA_QUALITY_MODEL }}
+          EMBEDDING_MODEL: ${{ secrets.EMBEDDING_MODEL }}
+
+          API_HOST: ${{ secrets.API_HOST }}
+          API_PORT: ${{ secrets.API_PORT }}
+          ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+          LOG_LEVEL: ${{ secrets.LOG_LEVEL }}
+
+          RESEARCHER_MODEL: ${{ secrets.RESEARCHER_MODEL }}
+          WRITER_MODEL: ${{ secrets.WRITER_MODEL }}
+          SEO_MODEL: ${{ secrets.SEO_MODEL }}
+
+          HF_API_BASE_URL: ${{ secrets.HF_API_BASE_URL }}
+          HF_DEFAULT_IMAGE_MODEL: ${{ secrets.HF_DEFAULT_IMAGE_MODEL }}
+          HF_DEFAULT_VIDEO_MODEL: ${{ secrets.HF_DEFAULT_VIDEO_MODEL }}
+          HF_DEFAULT_INFERENCE_STEPS: ${{ secrets.HF_DEFAULT_INFERENCE_STEPS }}
+          HF_DEFAULT_GUIDANCE_SCALE: ${{ secrets.HF_DEFAULT_GUIDANCE_SCALE }}
+          HF_DEFAULT_VIDEO_FRAMES: ${{ secrets.HF_DEFAULT_VIDEO_FRAMES }}
+
+          MAX_TOKENS: ${{ secrets.MAX_TOKENS }}
+          TEMPERATURE: ${{ secrets.TEMPERATURE }}
+          TOP_P: ${{ secrets.TOP_P }}
+          FREQUENCY_PENALTY: ${{ secrets.FREQUENCY_PENALTY }}
+          PRESENCE_PENALTY: ${{ secrets.PRESENCE_PENALTY }}
+
+          RELOAD: ${{ secrets.RELOAD }}
+          FIRECRAWL_API_KEY: ${{ secrets.FIRECRAWL_API_KEY }}
+          CREWAI_TRACING_ENABLED: ${{ secrets.CREWAI_TRACING_ENABLED }}
+
+          # AWS S3 Configuration
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ secrets.AWS_REGION }}
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+          S3_FOLDER_PREFIX: ${{ secrets.S3_FOLDER_PREFIX }}
+
+          # AWS SQS Configuration
+          QUEUE_PREFIX: ${{ secrets.QUEUE_PREFIX }}
+          USE_FIFO: ${{ secrets.USE_FIFO }}
+          ACCOUNT_ID: ${{ secrets.ACCOUNT_ID }}
+          SQS_QUEUE_URL: ${{ secrets.SQS_QUEUE_URL }}
+          SQS_ARTICLES_QUEUE_URL: ${{ secrets.SQS_ARTICLES_QUEUE_URL }}
+          SQS_IMAGE_QUEUE_URL: ${{ secrets.SQS_IMAGE_QUEUE_URL }}
+          SQS_VIDEO_QUEUE_URL: ${{ secrets.SQS_VIDEO_QUEUE_URL }}
+
+          # Langfuse Configuration
+          LANGFUSE_ENABLED: ${{ secrets.LANGFUSE_ENABLED }}
+          LANGFUSE_PUBLIC_KEY: ${{ secrets.LANGFUSE_PUBLIC_KEY }}
+          LANGFUSE_SECRET_KEY: ${{ secrets.LANGFUSE_SECRET_KEY }}
+          LANGFUSE_HOST: ${{ secrets.LANGFUSE_HOST }}
+        run: |
+          echo "🔐 Creating api-service/.env from GitHub Secrets"
+
+          mkdir -p api-service
+
+          cat > api-service/.env << EOF
+          # API Configuration
+          API_HOST=${API_HOST:-0.0.0.0}
+          API_PORT=${API_PORT:-8000}
+          RELOAD=${RELOAD:-false}
+          LOG_LEVEL=${LOG_LEVEL:-INFO}
+
+          # CORS Configuration
+          ALLOWED_ORIGINS=${ALLOWED_ORIGINS:-*}
+
+          # Ollama Configuration
+          OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://44.197.16.15:11434}
+          DEFAULT_MODEL=${OLLAMA_DEFAULT_MODEL:-qwen2.5:3b}
+          QUALITY_MODEL=${OLLAMA_QUALITY_MODEL:-qwen2.5:3b}
+          EMBEDDING_MODEL=${EMBEDDING_MODEL:-nomic-embed-text}
+
+          # AI Models
+          RESEARCHER_MODEL=${RESEARCHER_MODEL}
+          WRITER_MODEL=${WRITER_MODEL}
+          SEO_MODEL=${SEO_MODEL}
+
+          # HuggingFace Configuration
+          HF_API_BASE_URL=${HF_API_BASE_URL}
+          HF_DEFAULT_IMAGE_MODEL=${HF_DEFAULT_IMAGE_MODEL}
+          HF_DEFAULT_VIDEO_MODEL=${HF_DEFAULT_VIDEO_MODEL}
+          HF_DEFAULT_INFERENCE_STEPS=${HF_DEFAULT_INFERENCE_STEPS}
+          HF_DEFAULT_GUIDANCE_SCALE=${HF_DEFAULT_GUIDANCE_SCALE}
+          HF_DEFAULT_VIDEO_FRAMES=${HF_DEFAULT_VIDEO_FRAMES}
+
+          # LLM Settings
+          MAX_TOKENS=${MAX_TOKENS}
+          TEMPERATURE=${TEMPERATURE}
+          TOP_P=${TOP_P}
+          FREQUENCY_PENALTY=${FREQUENCY_PENALTY}
+          PRESENCE_PENALTY=${PRESENCE_PENALTY}
+
+          # External Services
+          FIRECRAWL_API_KEY=${FIRECRAWL_API_KEY}
+          CREWAI_TRACING_ENABLED=${CREWAI_TRACING_ENABLED}
+
+          # AWS S3 Configuration
+          AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+          AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+          AWS_REGION=${AWS_REGION}
+          S3_BUCKET_NAME=${S3_BUCKET_NAME}
+          S3_FOLDER_PREFIX=${S3_FOLDER_PREFIX}
+
+          # AWS SQS Configuration
+          QUEUE_PREFIX=${QUEUE_PREFIX}
+          USE_FIFO=${USE_FIFO}
+          ACCOUNT_ID=${ACCOUNT_ID}
+          SQS_QUEUE_URL=${SQS_QUEUE_URL}
+          SQS_ARTICLES_QUEUE_URL=${SQS_ARTICLES_QUEUE_URL}
+          SQS_IMAGE_QUEUE_URL=${SQS_IMAGE_QUEUE_URL}
+          SQS_VIDEO_QUEUE_URL=${SQS_VIDEO_QUEUE_URL}
+
+          # Langfuse Configuration
+          LANGFUSE_ENABLED=${LANGFUSE_ENABLED:-false}
+          LANGFUSE_PUBLIC_KEY=${LANGFUSE_PUBLIC_KEY}
+          LANGFUSE_SECRET_KEY=${LANGFUSE_SECRET_KEY}
+          LANGFUSE_HOST=${LANGFUSE_HOST:-https://cloud.langfuse.com}
+          EOF
+
+          echo "✅ Backend .env file created"
+          echo "📋 API_PORT: ${API_PORT:-8000}"
+          echo "📋 OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://44.197.16.15:11434}"
+          echo "📋 HF_API_BASE_URL: ${HF_API_BASE_URL}"
+          echo "📋 ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-*}"
+
+      - name: Archive backend
+        run: |
+          tar -czf backend.tar.gz api-service
+
+      - name: Add SSH key
+        run: |
+          echo "${{ secrets.EC2_SSH_KEY }}" > ec2_key.pem
+          chmod 600 ec2_key.pem
+
+      - name: Copy backend to EC2
+        run: |
+          scp -i ec2_key.pem -o StrictHostKeyChecking=no \
+            backend.tar.gz \
+            "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}:~/backend.tar.gz"
+
+      - name: Deploy backend to EC2
+        env:
+          OLLAMA_BASE_URL: ${{ secrets.OLLAMA_BASE_URL }}
+        run: |
+          ssh -i ec2_key.pem -o StrictHostKeyChecking=no \
+            "${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }}" \
+            "BACKEND_PATH='${{ secrets.EC2_BACKEND_PATH }}' OLLAMA_BASE_URL='${OLLAMA_BASE_URL:-http://44.197.16.15:11434}' bash -s" << 'EOF'
+          set -e
+
+          if [[ "$BACKEND_PATH" == *":"* ]]; then
+            echo "❌ ERROR: BACKEND_PATH contains colon"
+            exit 1
+          fi
+
+          if [[ "$BACKEND_PATH" != /* ]]; then
+            BACKEND_PATH="$HOME/$BACKEND_PATH"
+          fi
+
+          mkdir -p "$BACKEND_PATH"
+          cd "$BACKEND_PATH"
+
+          echo "📂 Deploying to: $BACKEND_PATH"
+
+          rm -rf backend_unpacked
+          mkdir backend_unpacked
+          tar -xzf ~/backend.tar.gz -C backend_unpacked
+          cp -r backend_unpacked/api-service/* .
+
+          if [ -f backend_unpacked/api-service/.env ]; then
+            echo "✅ Copying .env from archive"
+            cp backend_unpacked/api-service/.env .
+          else
+            echo "⚠️  No .env in archive, creating default"
+            cat > .env << 'ENVEOF'
+          OLLAMA_BASE_URL=http://44.197.16.15:11434
+          DEFAULT_MODEL=qwen2.5:3b
+          QUALITY_MODEL=qwen2.5:3b
+          EMBEDDING_MODEL=nomic-embed-text
+          API_HOST=0.0.0.0
+          API_PORT=8000
+          RELOAD=false
+          ALLOWED_ORIGINS=*
+          LOG_LEVEL=INFO
+          ENVEOF
+          fi
+
+          if grep -q "^OLLAMA_BASE_URL=" .env; then
+            sed -i "s|^OLLAMA_BASE_URL=.*|OLLAMA_BASE_URL=${OLLAMA_BASE_URL}|" .env
+            echo "✅ Updated OLLAMA_BASE_URL to ${OLLAMA_BASE_URL}"
+          else
+            echo "OLLAMA_BASE_URL=${OLLAMA_BASE_URL}" >> .env
+            echo "✅ Added OLLAMA_BASE_URL=${OLLAMA_BASE_URL}"
+          fi
+
+          echo "🔍 Final .env configuration:"
+          grep "^OLLAMA_BASE_URL=" .env
+          grep "^DEFAULT_MODEL=" .env || echo "  (DEFAULT_MODEL not set)"
+          grep "^API_PORT=" .env || echo "  (API_PORT not set)"
+
+          mkdir -p logs
+          find logs -type f -mtime +7 -delete || true
+
+          rm -rf backend_unpacked
+          rm -f ~/backend.tar.gz
+
+          VENV_PATH="$BACKEND_PATH/venv"
+          if [ ! -d "$VENV_PATH" ]; then
+            echo "Creating virtual environment..."
+            python3 -m venv "$VENV_PATH"
+          fi
+
+          source "$VENV_PATH/bin/activate"
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+          SERVICE_USER=$(whoami)
+
+          sudo tee /etc/systemd/system/vipcontentai-fastapi.service >/dev/null <<SERVICEUNIT
+          [Unit]
+          Description=VIPContentAI FastAPI
+          After=network.target
+
+          [Service]
+          Type=simple
+          User=$SERVICE_USER
+          WorkingDirectory=$BACKEND_PATH
+          Environment="PATH=$VENV_PATH/bin:/usr/local/bin:/usr/bin:/bin"
+          EnvironmentFile=$BACKEND_PATH/.env
+          ExecStart=$VENV_PATH/bin/uvicorn main:app --host 0.0.0.0 --port 8000
+          Restart=always
+          RestartSec=10
+          StandardOutput=journal
+          StandardError=journal
+
+          [Install]
+          WantedBy=multi-user.target
+          SERVICEUNIT
+
+          sudo systemctl daemon-reload
+          sudo systemctl restart vipcontentai-fastapi.service
+          sleep 3
+
+          echo "📊 Service status:"
+          sudo systemctl status vipcontentai-fastapi.service --no-pager | head -20 || true
+
+          echo ""
+          echo "🏥 Testing health endpoint..."
+          sleep 2
+          if curl -f -s http://localhost:8000/health > /dev/null; then
+            echo "✅ Health check passed"
+            HEALTH_RESPONSE=$(curl -s http://localhost:8000/health)
+            echo "$HEALTH_RESPONSE" | head -10
+          else
+            echo "❌ Health check failed"
+            sudo journalctl -u vipcontentai-fastapi.service -n 20 --no-pager || true
+          fi
+
+          echo ""
+          echo "🔍 Testing Ollama diagnostics..."
+          curl -s http://localhost:8000/diagnostics/ollama 2>/dev/null | head -15 || echo "Diagnostics unavailable"
+          EOF

@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git remote add:*)",
+      "Bash(git checkout:*)",
+      "Bash(git pull:*)",
+      "Bash(cat:*)",
+      "Bash(/tmp/env_backup.txt)",
+      "Bash(pnpm build:*)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_take_screenshot",
+      "Bash(env)"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "enableAllProjectMcpServers": true
+}

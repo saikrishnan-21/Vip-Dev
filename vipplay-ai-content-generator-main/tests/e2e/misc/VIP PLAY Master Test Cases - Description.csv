@@ -1,0 +1,1419 @@
+Test Case ID,Test Case Description,Preconditions,Test Steps,Expected Result,Actual Result,Status,Priority,Ticket,Covered
+TC_SN_01,Verify VIPContentAI landing page loads successfully,None,"1. Navigate to https://v0-ai-content-generator-ruddy.vercel.app/; 
+2. Verify page loads completely; 
+3. Verify all elements are displayed",Landing page should load successfully with all sections visible,,,High,,No
+TC_SN_02,Verify VIPContentAI logo is displayed,None,"1. Navigate to landing page; 
+2. Verify ""VIPContentAI"" logo/brand name is displayed in header",VIPContentAI logo should be displayed in the header,,,High,,No
+TC_SN_03,"Verify """"Sign In"""" button is displayed in header",None,"1. Navigate to landing page; 
+2. Verify ""Sign In"" button is displayed in header; 
+3. Click on ""Sign In"" button",Sign In button should be displayed and clicking on it should navigate to Sign In page,,,High,,No
+TC_SN_04,"Verify """"Get Started"""" button is displayed in header",None,"1. Navigate to landing page; 
+2. Verify ""Get Started"" button is displayed in header; 
+3. Click on ""Get Started"" button",Get Started button should be displayed and clicking on it should navigate to create your account page,,,High,,No
+TC_SN_05,"Verify """"Start Creating Free"""" button is displayed",None,"1. Navigate to landing page; 
+2. Verify ""Start Creating Free"" button is displayed in hero section; 
+3. Verify button is clickable
+4. Click on ""Start Creating Free"" button",Start Creating Free button should be displayed and clicking on it should navigate to Create your account page,,,High,,No
+TC_SN_06,"Verify """"Sign In"""" button in hero section is displayed",None,"1. Navigate to landing page; 
+2. Verify ""Sign In"" button is displayed in hero section; 
+3. Verify button is clickable
+4. Click on ""Sign In"" button",Sign In button should be displayed and clicking on it should navigate to Sign In page,,,High,,No
+TC_SN_07,Verify Trend-Powered Content description is accurate,None,"1. Navigate to landing page; 
+2. Verify description ""Generate articles based on RSS feeds, Google Trends, and latest sports news. Stay ahead with topical, relevant content."" is displayed",Description should accurately describe the feature,,,Medium,,No
+TC_SN_08,Verify Bulk Generation description is accurate,None,"1. Navigate to landing page; 
+2. Verify description ""Create 20+ articles at once. Review, approve, and export as Markdown or PDF. Scale your content production effortlessly."" is displayed",Description should accurately describe the feature,,,Medium,,No
+TC_SN_09,Verify SEO Optimized description is accurate,None,"1. Navigate to landing page; 
+2. Verify description ""Every article is crafted for search engines with proper structure, keywords, and engaging visuals following industry standards."" is displayed",Description should accurately describe the feature,,,Medium,,No
+TC_SN_10,Verify successful Sign In with valid credentials,User has registered account,"1. Navigate to Sign In page; 
+2. Enter valid email address; 
+3. Enter valid password; 
+4. Click ""Sign In"" button",User should be successfully sign in and redirected to dashboard/home page,,,High,VIP-10002,Yes
+TC_SN_11,"Verify Sign In with valid email and password with """"Remember me"""" checked",User has registered account,"1. Navigate to Sign In page; 
+2. Enter valid email address; 
+3. Enter valid password; 
+4. Check ""Remember me"" checkbox; 
+5. Click ""Sign In"" button",User should Sign In and credentials should be remembered for next session,,,High,VIP-10002,Yes
+TC_SN_12,"Verify Sign In with valid email and password with """"Remember me"""" unchecked",User has registered account,"1. Navigate to Sign In page; 
+2. Enter valid email address; 
+3. Enter valid password; 
+4. Do not Check ""Remember me"" checkbox; 
+5. Click ""Sign In"" button",User should Sign In and credentials should not be remembered for next session,,,High,,Yes
+TC_SN_13,Verify Sign In with invalid email address,User has registered account,"1. Navigate to Sign In page; 
+2. Enter invalid email format (e.g., invalidemail); 
+3. Enter valid password; 
+4. Click ""Sign In"" button",Error message should be displayed indicating invalid email format,,,High,VIP-10002,Yes
+TC_SN_14,Verify Sign In with non-existent email address,None,"1. Navigate to Sign In page; 
+2. Enter non-existent email address; 
+3. Enter any password;
+4. Click ""Sign In"" button",Error message should be displayed indicating invalid credentials,,,Medium,VIP-10002,Yes
+TC_SN_15,Verify Sign In with valid email and incorrect password,User has registered account,"1. Navigate to login page; 
+2. Enter valid email address; 
+3. Enter incorrect password; 
+4. Click ""Sign In"" button",Error message should be displayed indicating invalid credentials,,,Medium,VIP-10002,Yes
+TC_SN_16,Verify Sign In with both email and password fields empty,None,"1. Navigate to Sign In page; 
+2. Leave email field empty; 
+3. Leave password field empty; 
+4. Click ""Sign In"" button",Validation errors should be displayed for both email and password fields,,,Low,VIP-10002,Yes
+TC_SN_17,Verify email field accepts valid email formats,None,"1. Navigate to Sign In page; 
+2. Enter valid email format (e.g., user@example.com); 
+3. Verify email field accepts the input",Email field should accept valid email format without errors,,,High,VIP-10002,No
+TC_SN_18,Verify Sign In redirect to intended page after authentication,User should not be signed in,"1. Click on URL and type""https://v0-ai-content-generator-ruddy.vercel.app/dashboard/content""
+2. Check it
+3. Enter valid credentials and sign in","It should be redirected to login page and after successful login it should redirect to ""https://v0-ai-content-generator-ruddy.vercel.app/dashboard/content""",,,Medium,VIP-10002,Yes
+TC_SN_19,Verify password field is masked (shows asterisks or dots),None,"1. Navigate to Sign In page; 
+2. Enter password in password field",Password should be masked and not visible as plain text,,,High,VIP-10002,Yes
+TC_SN_20,"Verify """"Forgot password?"""" link functionality",None,"1. Navigate to Sign In page; 
+2. Click on ""Forgot password?"" link",User should be redirected to password reset page,,,Medium,VIP-10002,Yes
+TC_SN_21,"Verify """"Sign up"""" link functionality",None,"1. Navigate to Sign In page; 
+2. Click on ""Sign up"" link",User should be redirected to registration/sign up page,,,High,VIP-10002,No
+TC_SN_22,"Verify """"Remember me"""" checkbox can be toggled",None,"1. Navigate to Sign Inpage; 
+2. Click on ""Remember me"" checkbox",Checkbox should be checked/unchecked on click,,,High,VIP-10002,Yes
+TC_SN_23,Verify login with special characters in email,None,"1. Navigate to Sign In page; 
+2. Enter email with special characters (e.g., user+test@example.com); 
+3. Enter password; 
+4. Click ""Sign In"" button",Should handle special characters appropriately or show validation error,,,Medium,VIP-10002,Yes
+TC_SN_24,Verify Sign In with very long password,None,"1. Navigate to Sign In page; 
+2. Enter email address; 
+3. Enter password exceeding maximum length; 
+4. Click ""Sign In"" button",Should show validation error for password length or handle appropriately,,,Medium,VIP-10002,Yes
+TC_SN_25,Verify Sign In with case-sensitive password,User has registered account with specific password case,"1. Navigate to Sign In page; 
+2. Enter valid email address; 
+3. Enter password with different case (e.g., if password is ""Password123"" enter ""password123""); 
+4. Click ""Sign In"" button",Should show error if password is case-sensitive or login successfully if not,,,High,VIP-10002,Yes
+TC_SN_26,Verify multiple failed login attempts,None,"1. Navigate to Sign In page; 
+2. Attempt to login with incorrect credentials 5 times; 
+3. Verify account lockout or CAPTCHA display",After multiple failed attempts account should be locked or CAPTCHA should appear,,,Low,VIP-10002,Yes
+TC_SN_27,Verify Sign In with keyboard navigation,None,"1. Navigate to login page; 
+2. Use Tab key to navigate through fields; 
+3. Use Enter key to submit form",Should be able to navigate and submit using keyboard only,,,Medium,VIP-10002,Yes
+TC_SN_28,Verify error messages are clear and user-friendly,None,"1. Navigate to Sign In page; 
+2. Attempt login with invalid credentials; 
+3. Verify error message clarity",Error messages should be clear informative and help user understand the issue,,,Medium,VIP-10002,No
+TC_SN_29,Verify Sign In page loads correctly,None,"1. Navigate to Sign In page; 
+2. Verify page load time",Page should load within acceptable time (e.g.,,,Medium,VIP-10002,Yes
+TC_SN_30,Verify Sign In with copy-paste functionality,None,"1. Navigate to Sign In page; 
+2. Copy email and password from external source; 
+3. Paste into respective fields; 
+4. Click ""Sign In"" button",Should allow copy-paste functionality and login successfully,,,High,VIP-10002,Yes
+TC_SN_31,Verify password field shows/hide password toggle,None,"1. Navigate to Sign In page; 
+2. Enter password; 
+3. Look for show/hide password icon; 
+4. Click toggle if available",Password visibility should toggle between masked and visible,,,High,VIP-10002,Yes
+TC_SN_32,Verify Login redirect functionality,None,"1. Navigate to link ""https://v0-ai-content-generator-ruddy.vercel.app/dashboard/generate""
+2. Check it",It should navigate to Sign In page,,,Medium,,Yes
+TC_SN_33,Verify Login form prevents multiple submissions,,"1. Navigate to Sign In page; 
+2. Enter valid email address; 
+3. Enter valid password; 
+4. Click ""Sign In"" button
+5. Click Sign In again","It should show loading indicator, user should not be allowed to click sign in again",,,,,Yes
+TC_SN_34,Verify successful password reset request with valid email,User has registered account,"1. Navigate to forgot password page; 
+2. Enter valid registered email address; 
+3. Click ""Send reset link"" button; 
+4. Verify success message is displayed",Success message should be displayed indicating reset link has been sent to email,,,High,,Yes
+TC_SN_35,Verify email is sent after successful reset request,User has registered account,"1. Navigate to forgot password page; 
+2. Enter valid registered email address; 
+3. Click ""Send reset link"" button; 
+4. Check email inbox for reset password email",Reset password email should be received in user's inbox,,,High,,Yes
+TC_SN_36,Verify reset password email contains reset link,User has received reset password email,"1. Open reset password email; 
+2. Verify email contains reset password link; 
+3. Verify link is clickable",Reset password email should contain valid reset link and it should be valid for one hour,,,High,,Yes
+TC_SN_37,Verify successful password reset with matching passwords,User has clicked reset link from email,"1. Navigate to reset password page via email link; 
+2. Enter new password in ""New Password"" field; 
+3. Enter same password in ""Confirm Password"" field; 
+4. Click submit button; 
+5. Verify success message",Password should be reset successfully and user should see success message,,,,,Yes
+TC_SN_38,Verify user can login with new password after reset,User has successfully reset password,"1. Navigate to login page; 
+2. Enter email address; 
+3. Enter new password; 
+4. Click ""Sign In"" button",User should be able to login successfully with new password,,,High,,Yes
+TC_SN_39,Verify user cannot login with old password after reset,User has successfully reset password,"1. Navigate to login page; 
+2. Enter email address; 
+3. Enter old password; 
+4. Click ""Sign In"" button",User should not be able to login with old password,,,High,,Yes
+TC_SN_40,Verify reset request with invalid email format,None,"1. Navigate to forgot password page; 
+2. Enter invalid email format (e.g., invalidemail); 
+3. Click ""Send reset link"" button",Validation error should be displayed indicating invalid email format,,,,,Yes
+TC_SN_41,Verify reset request with non-existent email address,None,"1. Navigate to forgot password page; 
+2. Enter non-existent email address; 
+3. Click ""Send reset link"" button",Success message should be displayed (for security) or appropriate error message,,,,,Yes
+TC_SN_42,Verify reset request with empty email field,None,"1. Navigate to forgot password page; 
+2. Leave email field empty; 
+3. Click ""Send reset link"" button",Validation error should be displayed for email field,,,,,Yes
+TC_SN_43,Verify reset password with mismatched passwords,User has clicked reset link from email,"1. Navigate to reset password page; 
+2. Enter new password (e.g., ""NewPass123""); 
+3. Enter different password in confirm field (e.g., ""DifferentPass123""); 
+4. Click submit button",Validation error should be displayed indicating passwords do not match,,,,,Yes
+TC_SN_44,Verify password reset page redirects to login after success,User has successfully reset password,"1. Complete password reset successfully; 
+2. Verify user is redirected to login page; 
+3. Verify success message is displayed",User should be redirected to login page with success message,,,High,,Yes
+TC_SN_45,Verify Reset password fails with weak new password,User has clicked reset link from email,"1. Navigate to reset password page; 
+2. Enter new password (e.g., ""New123""); 
+3. Enter password in confirm field (e.g., ""New123""); 
+4. Click submit button",Weak password alert should be displayed,,,,,Yes
+TC_SN_46,Verify Reset password fails with expired token,"User has clicked expired reset link from email
+(ex: After one hour)","1. Navigate to reset password page; 
+2. Enter new password (e.g., ""New123""); 
+3. Enter password in confirm field (e.g., ""New123""); 
+4. Click submit button",Token expired alert should be displayed,,,,,Yes
+TC_SN_47,Verify Reset token can only be used once,"User has clicked already resetted link from email
+","1. Navigate to reset password page; 
+2. Enter new password (e.g., ""New123""); 
+3. Enter password in confirm field (e.g., ""New123""); 
+4. Click submit button",Link expired alert should be displayed,,,,,Yes
+TC_SN_48,Verify Multiple reset requests invalidate previous tokens,"User has clicked already resetted link from email
+","1. Navigate to reset password page; 
+2. Enter new password (e.g., ""New123""); 
+3. Enter password in confirm field (e.g., ""New123""); 
+4. Click submit button and try again",Link expired alert should be displayed if user tries multiple times,,,,,Yes
+TC_SN_49,Verify successful account creation with valid data,,"1. Navigate to signup page at https://v0-ai-content-generator-ruddy.vercel.app/signup; 
+2. Enter valid full name; 
+3. Enter valid email address; 
+4. Enter valid password; 
+5. Enter matching password in confirm password field; 
+6. Click ""Create Account"" button",User account should be created successfully and user should be redirected to Sign In page,,,High,VIP-10001,Yes
+TC_SN_50,Verify signup with empty full name field,None,"1. Navigate to signup page; 
+2. Leave full name field empty; 
+3. Enter valid email; 
+4. Enter valid password; 
+5. Enter matching password; 
+6. Click ""Create Account"" button",Validation error should be displayed for full name field,,,Low,VIP-10001,Yes
+TC_SN_51,Verify signup with empty email field,None,"1. Navigate to signup page; 
+2. Enter valid full name; 
+3. Leave email field empty; 
+4. Enter valid password; 
+5. Enter matching password; 
+6. Click ""Create Account"" button",Validation error should be displayed for email field,,,Low,VIP-10001,Yes
+TC_SN_52,Verify signup with empty password field,None,"1. Navigate to signup page; 
+2. Enter valid full name; 
+3. Enter valid email; 
+4. Leave password field empty; 
+5. Enter confirm password; 
+6. Click ""Create Account"" button",Validation error should be displayed for password field,,,Low,VIP-10001,Yes
+TC_SN_53,Verify signup with all fields empty,None,"1. Navigate to signup page; 
+2. Leave all fields empty; 
+3. Click ""Create Account"" button",Validation errors should be displayed for all required fields,,,Low,VIP-10001,Yes
+TC_SN_54,Verify full name field accepts valid input,None,"1. Navigate to signup page; 
+2. Enter valid full name (e.g., John Doe); 
+3. Verify field accepts the input",Full name field should accept valid input without errors,,,High,VIP-10001,No
+TC_SN_55,Verify password field is masked (shows asterisks or dots),,"1. Navigate to signup page; 
+2. Enter password in password field
+3. Click on Show / Hide",Password should be masked and clicking on show should show and hide should hide the password,,,High,VIP-10001,No
+TC_SN_56,Verify confirm password field is masked,,"1. Navigate to signup page; 
+2. Enter password in confirm password field
+3. Click on Show / Hide",Confirm password should be masked and clicking on show should show and hide should hide the password,,,High,VIP-10001,No
+TC_SN_57,Verify password minimum length requirement,,"1. Navigate to signup page; 
+2. Enter password shorter than minimum length (e.g., 5 characters); 
+3. Click ""Create Account"" button",Error message should be displayed indicating password minimum length requirement,,,High,VIP-10001,No
+TC_SN_58,Verify Login with newly created account,,"1. Navigate to signup page at https://v0-ai-content-generator-ruddy.vercel.app/signup; 
+2. Enter valid full name; 
+3. Enter valid email address; 
+4. Enter valid password; 
+5. Enter matching password in confirm password field; 
+6. Click ""Create Account"" button
+7. Login with newly created account",User should successfully login and redirected to dashboard,,,High,VIP-10001,No
+TC_SN_59,Verify signup with already registered email address,User account already exists with test email,"1. Navigate to signup page; 
+2. Enter valid full name; 
+3. Enter email address of existing account; 
+4. Enter valid password; 
+5. Enter matching password; 
+6. Click ""Create Account"" button",Error message should be displayed indicating email already exists,,,Medium,VIP-10001,Yes
+TC_SN_60,Verify signup with invalid email format,None,"1. Navigate to signup page; 
+2. Enter valid full name; 
+3. Enter invalid email format (e.g., invalidemail); 
+4. Enter valid password; 
+5. Enter matching password; 
+6. Click ""Create Account"" button",Error message should be displayed indicating invalid email format,,,Medium,VIP-10001,Yes
+TC_SN_61,Verify signup with password and confirm password mismatch,None,"1. Navigate to signup page; 
+2. Enter valid full name; 
+3. Enter valid email; 
+4. Enter valid password; 
+5. Enter different password in confirm password field; 
+6. Click ""Create Account"" button",Error message should be displayed indicating password mismatch,,,Medium,VIP-10001,Yes
+TC_SN_62,Verify Password strength indicator shows appropriate strength,,"1. Navigate to signup page at https://v0-ai-content-generator-ruddy.vercel.app/signup; 
+2. Enter valid full name; 
+3. Enter valid email address; 
+4. Enter valid password and type and check it;",As user types password strength indicator should be displayed,,,High,VIP-10001,Yes
+TC_SN_63,Registration with special characters in name,,"1. Navigate to signup page at https://v0-ai-content-generator-ruddy.vercel.app/signup; 
+2. Enter 'Test@#QA' in full name; 
+3. Enter valid email address; 
+4. Enter valid password; 
+5. Enter matching password in confirm password field; 
+6. Click ""Create Account"" button
+7. Login with newly created account",User should successfully login and redirected to dashboard,,,Medium,VIP-10001,Yes
+TC_SN_64,Verify Sign In and Sign Up page responsive design on mobile device,None,"1. Open Sign In page on mobile device; 
+2. Verify all elements are visible and accessible; 
+3. Test login functionality",All elements should be properly displayed and functional on mobile device,,,Medium,,No
+TC_SN_65,Verify Sign In and Sign Up page responsive design on tablet device,None,"1. Open Sign In page on tablet device; 
+2. Verify all elements are visible and accessible; 
+3. Test login functionality",All elements should be properly displayed and functional on tablet device,,,Medium,,No
+TC_DB_01,Verify dashboard page loads successfully after login,User is logged in,"1. Navigate to dashboard page; 
+2. Verify page loads completely; 
+3. Verify all elements are displayed",Dashboard page should load successfully with all sections visible,,,High,,No
+TC_DB_02,Verify dashboard displays welcome message,User is logged in,"1. Navigate to dashboard page; 
+2. Verify welcome message is displayed","Welcome message """"Welcome back! Here's your content overview."""" should be displayed",,,High,,No
+TC_DB_03,Verify user email is displayed in header,User is logged in,"1. Navigate to dashboard page; 
+2. Verify user email is displayed in header",User email (e.g.,,,High,,No
+TC_DB_04,"Verify """"Sign Out"""" button functionality",User is logged in,"1. Navigate to dashboard page; 
+2. Click on ""Sign Out"" button",User should be logged out and redirected to login page,,,High,,Yes
+TC_DB_05,"Verify """"Overview"""" navigation link",User is logged in,"1. Navigate to dashboard page; 
+2. Click on ""Overview"" link in navigation menu",User should remain on dashboard/overview page or navigate appropriately,,,High,,No
+TC_DB_06,"Verify """"Generate Content"""" navigation link",User is logged in,"1. Navigate to dashboard page; 
+2. Click on ""Generate Content"" link in navigation menu",User should be redirected to content generation page,,,High,,No
+TC_DB_07,"Verify """"Knowledge Base"""" navigation link",User is logged in,"1. Navigate to dashboard page; 
+2. Click on ""Knowledge Base"" link in navigation menu",User should be redirected to knowledge base page,,,High,,No
+TC_DB_08,"Verify """"Media Library"""" navigation link",User is logged in,"1. Navigate to dashboard page; 
+2. Click on ""Media Library"" link in navigation menu",User should be redirected to media library page,,,High,,No
+TC_DB_09,"Verify """"Content"""" navigation link",User is logged in,"1. Navigate to dashboard page; 
+2. Click on ""Content"" link in navigation menu",User should be redirected to content management page,,,High,,No
+TC_DB_10,"Verify """"Settings"""" navigation link",User is logged in,"1. Navigate to dashboard page; 
+2. Click on ""Settings"" link in navigation menu",User should be redirected to settings page,,,High,,No
+TC_DB_11,"Verify """"AI Configuration"""" navigation link",User is logged in,"1. Navigate to dashboard page; 
+2. Click on ""AI Configuration"" link in navigation menu",User should be redirected to AI Configuration page,,,High,,No
+TC_DB_12,"Verify """"Total Articles"""" statistic card displays correctly",User is logged in,"1. Navigate to dashboard page; 
+2. Verify ""Total Articles"" card is displayed; 
+3. Verify count value is shown",Total Articles card should display with accurate count,,,High,,No
+TC_DB_13,"Verify """"In Review"""" statistic card displays correctly",User is logged in,"1. Navigate to dashboard page; 
+2. Verify ""Generated this month"" card; 
+3. Verify ""In Review"" count; 
+4. Verify ""Awaiting approval"" count",Total In Review card should display with accurate count,,,High,,No
+TC_DB_14,"Verify """"Knowledge Sources"""" statistic card displays correctly",User is logged in,"1. Navigate to dashboard page; 
+2. Verify ""Knowledge Sources"" card; 
+3. Verify RSS feeds & trends count",Knowledge Sources card should display count of RSS feeds & trends,,,High,,No
+TC_DB_15,"Verify """"Avg. Performance"""" statistic card displays correctly",User is logged in,"1. Navigate to dashboard page; 
+2. Verify ""Avg. Performance"" card; 
+3. Verify SEO score is displayed",Avg. Performance card should display SEO score (-- if no data available),,,High,,No
+TC_DB_16,Verify statistics cards update when data changes,User is logged in and has generated content,"1. Navigate to dashboard page; 
+2. Note initial statistics; 
+3. Generate new content; 
+4. Refresh dashboard; 
+5. Verify statistics are updated",Statistics cards should reflect updated counts after content generation,,,High,,Yes
+TC_DB_17,"Verify """"Generate New Content"""" start Generating button",User is logged in,"1. Navigate to dashboard page; 
+2. Click on ""Start generating"" button",User should be redirected to Generate Content page,,,High,,No
+TC_DB_18,"Verify """"Manage Knowledge Base"""" quick action button",User is logged in,"1. Navigate to dashboard page; 
+2. Click on ""Manage Knowledge Base"" button",User should be redirected to knowledge base management page,,,High,,No
+TC_DB_19,"Verify """"Generate Your First Article"""" button in empty state",User is logged in with no articles,"1. Navigate to dashboard page; 
+2. Verify ""Generate Your First Article"" button is displayed; 
+3. Click on ""Generate Your First Article"" button",Button should be visible and clicking it should redirect to content generation page,,,High,,No
+TC_DB_20,Verify dashboard page refresh functionality,User is logged in,"1. Navigate to dashboard page; 
+2. Refresh the page; 
+3. Verify all data reloads correctly",Dashboard should refresh and reload all statistics and content correctly,,,High,,No
+TC_DB_21,Verify dashboard displays correctly on mobile device,User is logged in,"1. Open dashboard on mobile device; 
+2. Verify all elements are visible; 
+3. Verify navigation menu is accessible; 
+4. Verify statistics cards are displayed properly",All dashboard elements should be properly displayed and accessible on mobile device,,,High,,No
+TC_DB_22,Verify dashboard displays correctly on tablet device,User is logged in,"1. Open dashboard on tablet device; 
+2. Verify all elements are visible; 
+3. Verify layout adapts to tablet screen size",All dashboard elements should be properly displayed and accessible on tablet device,,,High,,No
+TC_DB_23,Verify dashboard displays correctly on desktop,User is logged in,"1. Open dashboard on desktop; 
+2. Verify all elements are visible; 
+3. Verify optimal layout is displayed",All dashboard elements should be properly displayed with optimal desktop layout,,,High,,No
+TC_DB_24,Verify navigation menu highlights active page,User is logged in,"1. Navigate to dashboard page; 
+2. Verify ""Overview"" or current page is highlighted in navigation menu",Active navigation item should be visually highlighted,,,High,,No
+TC_DB_25,"Verify """"Total Articles"""" count updates when new article is created",User is logged in and has generated articles,"1. Navigate to dashboard page; 
+2. Note current ""Total Articles"" count; 
+3. Generate new article; 
+4. Refresh dashboard; 
+5. Verify count increased",Total Articles count should increase by 1 after generating new article,,,High,,No
+TC_DB_26,"Verify """"In Review"""" count updates when article status changes",User is logged in and has articles,"1. Navigate to dashboard page; 
+2. Note ""In Review"" count; 
+3. Change article status to review; 
+4. Refresh dashboard; 5. Verify count updated",In Review count should reflect current number of articles in review status,,,High,,No
+TC_DB_27,"Verify """"Knowledge Sources"""" count updates when source is added",User is logged in,"1. Navigate to dashboard page; 
+2. Note ""Knowledge Sources"" count; 
+3. Add new RSS feed or trend; 
+4. Refresh dashboard; 
+5. Verify count increased",Knowledge Sources count should increase after adding new source,,,High,,No
+TC_DB_28,Verify SEO score displays correctly when performance data exists,User is logged in and has articles with performance data,"1. Navigate to dashboard page; 
+2. Verify ""Avg. Performance"" displays actual SEO score; 
+3. Verify score is numeric value","SEO score should display actual numeric value instead of """"--""""",,,High,,No
+TC_DB_29,Verify Signout Functionality,User is logged in,"1. Navigate to dashboard page; 
+2. Click on Signout",It should signout and navigate to Sign In page,,,High,VIP-10008,No
+TC_DB_30,Verify After logout user cannot access protected routes,User is logged in,"1. Navigate to dashboard page; 
+2. Click on Signout
+3. Check by navigating ""https://v0-ai-content-generator-ruddy.vercel.app/dashboard/generate""",It should ask user to Sign In,,,Medium,VIP-10008,Yes
+TC_GC_01,Verify Generate Content page loads successfully,User is logged in,"1. Navigate to Generate Content page at https://v0-ai-content-generator-ruddy.vercel.app/dashboard/generate; 
+2. Verify page loads completely; 
+3. Verify all elements are displayed",Generate Content page should load successfully with all sections visible,,,,,Yes
+TC_GC_02,Verify Generate Content page title is displayed,User is logged in,"1. Navigate to Generate Content page; 
+2. Verify page title ""Generate Content"" is displayed; 
+3. Verify subtitle ""Choose a generation template and create SEO-optimized articles"" is displayed",Page title and subtitle should be displayed correctly,,,,,Yes
+TC_GC_03,Verify Generate Content navigation link functionality,User is logged in,"1. Navigate to dashboard; 
+2. Click on ""Generate Content"" link in navigation menu; 
+3. Verify user is redirected to Generate Content page",Generate Content link should navigate to Generate Content page,,,,,Yes
+TC_GC_04,Verify Generate Content page displays Select Generation Template section,User is logged in,"1. Navigate to Generate Content page; 
+2. Verify ""Select Generation Template"" section is displayed; 
+3. Verify section heading is visible",Select Generation Template section should be displayed,,,,,Yes
+TC_GC_05,Verify Topic-Based template is displayed,User is logged in,"1. Navigate to Generate Content page; 
+2. Verify ""Topic-Based"" template option is displayed; 
+3. Verify description ""Generate articles from a specific topic or subject"" is shown",Topic-Based template should be displayed with description,,,,,Yes
+TC_GC_06,Verify Keyword-Driven template is displayed,User is logged in,"1. Navigate to Generate Content page; 
+2. Verify ""Keyword-Driven"" template option is displayed; 
+3. Verify description ""Create SEO-optimized content from target keywords"" is shown",Keyword-Driven template should be displayed with description,,,,,Yes
+TC_GC_07,Verify Trending Topics template is displayed,User is logged in,"1. Navigate to Generate Content page; 
+2. Verify ""Trending Topics"" template option is displayed; 
+3. Verify description ""Write about current trending topics and searches"" is shown",Trending Topics template should be displayed with description,,,,,Yes
+TC_GC_08,Verify Article Spin template is displayed,User is logged in,"1. Navigate to Generate Content page; 
+2. Verify ""Article Spin"" template option is displayed; 
+3. Verify description ""Create unique variations of existing articles"" is shown",Article Spin template should be displayed with description,,,,,Yes
+TC_GC_09,Verify Article Topic field is displayed,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Article Topic"" field is displayed; 
+4. Verify field label is correct; 
+5. Verify placeholder text ""Enter a specific topic for your article"" is shown",Article Topic field should be displayed with correct label and placeholder,,,,,Yes
+TC_GC_10,Verify Article Topic field accepts input,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Enter topic in Article Topic field; 
+4. Verify input is accepted",Article Topic field should accept text input,,,,,Yes
+TC_GC_11,Verify Article Topic field validation for empty input,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Leave Article Topic field empty; 
+4. Attempt to generate content; 
+5. Verify validation error is displayed",Article Topic field should show validation error when empty,,,,,Yes
+TC_GC_12,Verify Focus Area field is displayed,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Focus Area (Optional)"" field is displayed; 
+4. Verify field is marked as optional",Focus Area field should be displayed and marked as optional,,,,,No
+TC_GC_13,Verify Focus Area field accepts input,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Enter focus area in Focus Area field; 
+4. Verify input is accepted",Focus Area field should accept text input,,,,,No
+TC_GC_14,Verify Tone & Style options are displayed,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Tone & Style"" section is displayed; 
+4. Verify all tone options are listed",Tone & Style section should display all available options,,,,,Yes
+TC_GC_15,Verify Professional & Informative tone option,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Professional & Informative"" tone option is available; 
+4. Select the option; 5. Verify selection is saved",Professional & Informative tone option should be selectable,,,,,Yes
+TC_GC_16,Verify Casual & Engaging tone option,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Casual & Engaging"" tone option is available; 
+4. Select the option; 
+5. Verify selection is saved",Casual & Engaging tone option should be selectable,,,,,Yes
+TC_GC_17,Verify Expert Analysis tone option,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Expert Analysis"" tone option is available; 
+4. Select the option; 
+5. Verify selection is saved",Expert Analysis tone option should be selectable,,,,,Yes
+TC_GC_18,Verify Beginner Friendly tone option,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Beginner Friendly"" tone option is available; 
+4. Select the option; 
+5. Verify selection is saved",Beginner Friendly tone option should be selectable,,,,,Yes
+TC_GC_19,Verify Advanced Settings section is displayed,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Advanced Settings"" section is displayed; 
+4. Verify all advanced options are visible",Advanced Settings section should be displayed with all options,,,,,No
+TC_GC_20,Verify Target Word Count options are displayed,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Target Word Count"" section is displayed; 
+4. Verify all word count options are listed",Target Word Count section should display all available options,,,,,Yes
+TC_GC_21,Verify Target Word Count 800-1000 words option,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""800-1000 words"" option is available; 
+4. Select the option; 5. Verify selection is saved",800-1000 words option should be selectable,,,,,Yes
+TC_GC_22,Verify Target Word Count 1000-1500 words option,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""1000-1500 words"" option is available; 
+4. Select the option; 5. Verify selection is saved",1000-1500 words option should be selectable,,,,,Yes
+TC_GC_23,Verify Target Word Count 1500-2000 words option,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""1500-2000 words"" option is available; 
+4. Select the option; 
+5. Verify selection is saved",1500-2000 words option should be selectable,,,,,Yes
+TC_GC_24,Verify Target Word Count 2000+ words option,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""2000+ words"" option is available; 
+4. Select the option; 
+5. Verify selection is saved",2000+ words option should be selectable,,,,,Yes
+TC_GC_25,Verify Include Images options are displayed,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Include Images"" section is displayed; 
+4. Verify all image options are listed",Include Images section should display all available options,,,,,No
+TC_GC_26,Verify Include Images Yes (3-5 images) option,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Yes (3-5 images)"" option is available; 
+4. Select the option; 
+5. Verify selection is saved",Yes (3-5 images) option should be selectable,,,,,No
+TC_GC_27,Verify Include Images Yes (1-2 images) option,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Yes (1-2 images)"" option is available; 
+4. Select the option; 
+5. Verify selection is saved",Yes (1-2 images) option should be selectable,,,,,No
+TC_GC_28,Verify Include Images No images option,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""No images"" option is available; 
+4. Select the option; 
+5. Verify selection is saved",No images option should be selectable,,,,,No
+TC_GC_29,Verify SEO Optimization options are displayed,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""SEO Optimization"" section is displayed; 
+4. Verify all SEO options are listed",SEO Optimization section should display all available options,,,,,Yes
+TC_GC_30,Verify SEO Optimization Maximum (Recommended) option,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Maximum (Recommended)"" option is available; 
+4. Select the option; 
+5. Verify selection is saved",Maximum (Recommended) option should be selectable,,,,,Yes
+TC_GC_31,Verify SEO Optimization Balanced option,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Balanced"" option is available; 
+4. Select the option; 
+5. Verify selection is saved",Balanced option should be selectable,,,,,Yes
+TC_GC_32,Verify SEO Optimization Minimal option,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Minimal"" option is available; 
+4. Select the option; 
+5. Verify selection is saved",Minimal option should be selectable,,,,,Yes
+TC_GC_33,Verify Content Structure options are displayed,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Content Structure"" section is displayed; 
+4. Verify all structure options are listed",Content Structure section should display all available options,,,,,No
+TC_GC_34,Verify Content Structure Auto (AI decides) option,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Auto (AI decides)"" option is available; 
+4. Select the option; 
+5. Verify selection is saved",Auto (AI decides) option should be selectable,,,,,No
+TC_GC_35,Verify Content Structure Listicle option,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Listicle"" option is available; 
+4. Select the option; 
+5. Verify selection is saved",Listicle option should be selectable,,,,,No
+TC_GC_36,Verify Content Structure How-to Guide option,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""How-to Guide"" option is available; 
+4. Select the option; 
+5. Verify selection is saved",How-to Guide option should be selectable,,,,,No
+TC_GC_37,Verify Content Structure Analysis option,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Analysis"" option is available; 
+4. Select the option; 
+5. Verify selection is saved",Analysis option should be selectable,,,,,No
+TC_GC_38,Verify Include meta description and title tags checkbox,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Include meta description and title tags"" checkbox is displayed; 
+4. Click checkbox; 
+5. Verify checkbox is checked/unchecked",Include meta description and title tags checkbox should be functional,,,,,No
+TC_GC_39,Verify Add internal linking suggestions checkbox,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Add internal linking suggestions"" checkbox is displayed; 
+4. Click checkbox; 
+5. Verify checkbox is checked/unchecked",Add internal linking suggestions checkbox should be functional,,,,,No
+TC_GC_40,Verify Generate social media snippets checkbox,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Generate social media snippets"" checkbox is displayed; 
+4. Click checkbox; 
+5. Verify checkbox is checked/unchecked",Generate social media snippets checkbox should be functional,,,,,Yes
+TC_GC_41,Verify Bulk Generation section is displayed,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Bulk Generation"" section is displayed; 
+4. Verify all bulk generation fields are visible",Bulk Generation section should be displayed with all fields,,,,,Yes
+TC_GC_42,Verify Number of Articles field is displayed,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify ""Number of Articles"" field is displayed; 
+4. Verify field accepts numeric input",Number of Articles field should be displayed and accept numeric input,,,,,Yes
+TC_GC_43,Verify Generate up to 50 articles message,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Verify message ""Generate up to 50 articles at once"" is displayed",Message about article limit should be displayed,,,,,Yes
+TC_GC_44,Verify Number of Articles field validation for maximum limit,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Enter number greater than 50 in Number of Articles field; 
+4. Verify validation error is displayed",Number of Articles field should show error for values exceeding 50,,,,,Yes
+TC_GC_45,Verify Number of Articles field validation for minimum value,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Enter 0 or negative number in Number of Articles field; 
+4. Verify validation error is displayed",Number of Articles field should show error for invalid values,,,,,Yes
+TC_GC_46,Verify Estimated time display,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Enter number of articles; 
+4. Verify ""Estimated time"" is displayed; 
+5. Verify estimated time updates based on number of articles",Estimated time should be displayed and update dynamically,,,,,No
+TC_GC_47,Verify Total articles count display,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Enter number of articles; 
+4. Verify ""Total articles"" count is displayed; 
+5. Verify count matches entered number",Total articles count should be displayed and match entered number,,,,,Yes
+TC_GC_48,Verify Generate Articles button is displayed,User is logged in and Topic-Based template is selected,"1. Navigate to Generate Content page; 
+2. Select Topic-Based template; 
+3. Configure all required fields; 
+4. Verify ""Generate X Articles"" button is displayed (where X is number of articles); 
+5. Verify button is clickable",Generate Articles button should be displayed and functional,,,,,Yes
+TC_GC_49,Verify Recent Generations section is displayed,User is logged in,"1. Navigate to Generate Content page; 
+2. Verify ""Recent Generations"" section is displayed; 
+3. Verify section heading is visible",Recent Generations section should be displayed,,,,,No
+TC_GC_50,Verify Recent Generations displays completed generations,User is logged in and has completed generations,"1. Navigate to Generate Content page; 
+2. Verify completed generations are displayed in Recent Generations section; 
+3. Verify status ""completed"" is shown; 
+4. Verify article count and time are displayed",Completed generations should be displayed with status and details,,,,,No
+TC_GC_51,Verify Recent Generations displays in-progress generations,User is logged in and has in-progress generations,"1. Navigate to Generate Content page; 
+2. Verify in-progress generations are displayed in Recent Generations section; 
+3. Verify status ""in-progress"" is shown; 
+4. Verify article count and time are displayed",In-progress generations should be displayed with status and details,,,,,No
+TC_GC_52,Verify Recent Generations displays generation details,User is logged in and has generations,"1. Navigate to Generate Content page; 
+2. Verify generation title is displayed; 
+3. Verify status (completed/in-progress) is shown; 
+4. Verify article count is displayed; 
+5. Verify time information is shown",Generation details should be displayed correctly in Recent Generations,,,,,No
+TC_GC_53,Verify Recent Generations click functionality,User is logged in and has generations,"1. Navigate to Generate Content page; 
+2. Click on a generation in Recent Generations section; 
+3. Verify navigation or detail view is displayed",Clicking on generation should show details or navigate to generation page,,,,,No
+TC_GC_54,Verify Keyword-Driven template selection,User is logged in,"1. Navigate to Generate Content page; 2. Click on ""Keyword-Driven"" template; 3. Verify template is selected; 4. Verify configuration form is displayed",Keyword-Driven template should be selectable and show configuration form,,,,,Yes
+TC_GC_55,Verify Trending Topics template selection,User is logged in,"1. Navigate to Generate Content page; 2. Click on ""Trending Topics"" template; 3. Verify template is selected; 4. Verify configuration form is displayed",Trending Topics template should be selectable and show configuration form,,,,,Yes
+TC_GC_56,Verify Article Spin template selection,User is logged in,"1. Navigate to Generate Content page; 2. Click on ""Article Spin"" template; 3. Verify template is selected; 4. Verify configuration form is displayed",Article Spin template should be selectable and show configuration form,,,,,Yes
+TC_GC_57,Verify Configure Keyword-Driven section,,"1. Navigate to Generate Content page; 
+2. Select Keyword-Driven template; 
+3. Verify ""Configure Keyword-Driven"" section is displayed with Target keyword text area field and Keyword density dropdown with natural, Light, medium, and heavy options;","Target keyword text area field should accept keywords, and Keyword Density should accept available options",,,,,Yes
+TC_GC_58,Verify Trending topics section,,"1. Navigate to Generate Content page; 
+2. Select Configure Trending Topics template; 
+3. Verify by checking trending topics",Selected topic should be checked,,,,,Yes
+TC_GC_59,Verify Article Spin section,,"1. Navigate to Generate Content page; 
+2. Select Article Spin template; 
+3. Verify Configure article spin text, source article URL text field, Uniqueness level dropdown with High, Medium, and Inspired options","It should accept the URL, and user selected Iniqueness level should be displayed",,,,,Yes
+TC_KB_01,Verify Knowledge Base page loads successfully,User is logged in,"1. Navigate to Knowledge Base page at https://v0-ai-content-generator-ruddy.vercel.app/dashboard/knowledge-base; 
+2. Verify page loads completely; 
+3. Verify all elements are displayed",Knowledge Base page should load successfully with all sections visible,,,,,No
+TC_KB_02,Verify Knowledge Base page title is displayed,User is logged in,"1. Navigate to Knowledge Base page; 
+2. Verify page title ""Knowledge Base"" is displayed; 
+3. Verify subtitle ""Captured articles and sources for AI-powered content generation"" is displayed",Page title and subtitle should be displayed correctly,,,,,No
+TC_KB_03,Verify Articles and Sources statistics are displayed,User is logged in,"1. Navigate to Knowledge Base page; 
+2. Verify statistics section displays ""Articles (X)"" where X is the count; 
+3. Verify statistics section displays ""Sources (Y)"" where Y is the count; 
+4. Verify counts are accurate",Articles and Sources statistics should be displayed with accurate counts,,,,,Yes
+TC_KB_04,Verify Add Source button is displayed,User is logged in,"1. Navigate to Knowledge Base page; 
+2. Verify ""Add Source"" button is displayed; 
+3. Verify button is clickable",Add Source button should be displayed and functional,,,,,Yes
+TC_KB_05,Verify Add Source button functionality,User is logged in,"1. Navigate to Knowledge Base page; 
+2. Click on ""Add Source"" button; 
+3. Verify add source modal or form is displayed",Add Source button should open add source form or modal,,,,,Yes
+TC_KB_06,Verify source article count is displayed,User is logged in and has sources,"1. Navigate to Knowledge Base page; 
+2. Verify each source displays article count (e.g., ""2 articles""); 
+3. Verify count is accurate",Source article count should be displayed and accurate,,,,,Yes
+TC_KB_07,Verify source status is displayed,User is logged in and has sources,"1. Navigate to Knowledge Base page; 
+2. Verify each source displays status (e.g., ""Active"" or ""Crawled""); 
+3. Verify status is clearly visible",Source status should be displayed for each source,,,,,Yes
+TC_KB_08,Verify Active status indicator,User is logged in and has active sources,"1. Navigate to Knowledge Base page; 
+2. Verify sources with ""Active"" status are displayed; 
+3. Verify Active status is visually distinct",Active status should be clearly displayed,,,,,No
+TC_KB_09,Verify articles are displayed under each source,User is logged in and has sources with articles,"1. Navigate to Knowledge Base page; 
+2. Verify articles are displayed under their respective sources; 
+3. Verify articles are properly grouped by source",Articles should be displayed under their respective sources,,,,,Yes
+TC_KB_10,Verify article title is displayed,User is logged in and has articles,"1. Navigate to Knowledge Base page; 
+2. Verify each article displays its title; 
+3. Verify title is clearly visible and readable",Article title should be displayed for each article,,,,,Yes
+TC_KB_11,Verify article description is displayed,User is logged in and has articles,"1. Navigate to Knowledge Base page; 
+2. Verify each article displays its description; 
+3. Verify description is truncated if too long",Article description should be displayed for each article,,,,,Yes
+TC_KB_12,Verify View Source button functionality,User is logged in and has articles,"1. Navigate to Knowledge Base page; 
+2. Click on ""View Source"" button for an article; 
+3. Verify source details or source page is displayed",View Source button should display source details or navigate to source page,,,,,Yes
+TC_KB_13,Verify Use in Content button is displayed,User is logged in and has articles,"1. Navigate to Knowledge Base page; 
+2. Verify ""Use in Content"" button is displayed for each article; 
+3. Verify button is clickable",Use in Content button should be displayed for each article,,,,,No
+TC_KB_14,Verify source expansion/collapse functionality,User is logged in and has sources with articles,"1. Navigate to Knowledge Base page; 
+2. Click on source header; 
+3. Verify articles expand/collapse; 
+4. Verify visual indicator shows expanded/collapsed state",Source should expand/collapse to show/hide articles,,,,,Yes
+TC_KB_15,Verify search functionality for sources,User is logged in and has multiple sources,"1. Navigate to Knowledge Base page; 
+2. Enter search term in search field (if available); 
+3. Verify sources are filtered based on search term; 
+4. Verify search results are displayed",Search should filter sources based on search term,,,,,Yes
+TC_KB_16,Verify search functionality for articles,User is logged in and has multiple articles,"1. Navigate to Knowledge Base page; 
+2. Enter search term in search field (if available); 
+3. Verify articles are filtered based on search term; 
+4. Verify search results are displayed",Search should filter articles based on search term,,,,,Yes
+TC_KB_17,Verify source deletion functionality,User is logged in and has sources,"1. Navigate to Knowledge Base page; 
+2. Click on delete/remove option for a source (if available); 
+3. Confirm deletion; 
+4. Verify source is removed from list; 
+5. Verify article count updates",Source should be deletable and removed from list,,,,,Yes
+TC_KB_18,Verify Add Source dropdown contains RSS Feed option,User is logged in,"1. Navigate to Knowledge Base page; 
+2. Click on ""+ Add Source"" button; 
+3. Verify ""RSS Feed"" option is displayed in the dropdown; 
+4. Verify option is selectable",RSS Feed option should be displayed in the dropdown,,,,,Yes
+TC_KB_19,Verify Add Source dropdown contains Website option,User is logged in,"1. Navigate to Knowledge Base page; 
+2. Click on ""+ Add Source"" button; 
+3. Verify ""Website"" option is displayed in the dropdown; 
+4. Verify option is selectable",Website option should be displayed in the dropdown,,,,,Yes
+TC_KB_20,Verify Add Source dropdown contains Topic option,User is logged in,"1. Navigate to Knowledge Base page; 
+2. Click on ""+ Add Source"" button; 
+3. Verify ""Topic"" option is displayed in the dropdown; 
+4. Verify option is selectable",Topic option should be displayed in the dropdown,,,,,Yes
+TC_KB_21,Verify clicking RSS Feed option opens RSS Feed form,User is logged in,"1. Navigate to Knowledge Base page; 
+2. Click on ""+ Add Source"" button; 
+3. Click on ""RSS Feed"" option; 
+4. Verify RSS Feed form/modal is displayed; 
+5. Verify form is ready for input",RSS Feed form should open when RSS Feed option is selected,,,,,Yes
+TC_KB_22,Verify clicking Website option opens Website form,User is logged in,"1. Navigate to Knowledge Base page; 
+2. Click on ""+ Add Source"" button; 
+3. Click on ""Website"" option; 
+4. Verify Website form/modal is displayed; 
+5. Verify form is ready for input",Website form should open when Website option is selected,,,,,Yes
+TC_KB_23,Verify clicking Topic option opens Topic form,User is logged in,"1. Navigate to Knowledge Base page; 
+2. Click on ""+ Add Source"" button; 
+3. Click on ""Topic"" option; 
+4. Verify Topic form/modal is displayed; 
+5. Verify form is ready for input",Topic form should open when Topic option is selected,,,,,Yes
+TC_KB_24,Verify RSS Feed form submission,User is logged in,"1. Navigate to Knowledge Base page; 
+2. Click ""+ Add Source"" button; 
+3. Click ""RSS Feed"" option; 
+4. Fill in all required fields with valid RSS feed URL; 
+5. Submit form; 6. Verify RSS Feed source is added to Knowledge Base",RSS Feed source should be successfully added,,,,,Yes
+TC_KB_25,Verify Website form submission,User is logged in,"1. Navigate to Knowledge Base page; 
+2. Click ""+ Add Source"" button; 
+3. Click ""Website"" option; 
+4. Fill in all required fields with valid website URL; 
+5. Submit form; 
+6. Verify Website source is added to Knowledge Base",Website source should be successfully added,,,,,Yes
+TC_KB_26,Verify Crawl Frequency dropdown is displayed,User is logged in and Add Website to Monitor dialog is open,"1. Navigate to Knowledge Base page at https://v0-ai-content-generator-ruddy.vercel.app/dashboard/knowledge-base; 2. Click ""Add Source"" button; 3. Open ""Add Website to Monitor"" dialog; 4. Verify ""Crawl Frequency"" label is displayed; 5. Verify Crawl Frequency dropdown field is displayed; 6. Verify dropdown is clickable and functional",Crawl Frequency dropdown should be displayed with clear label,,,,,Yes
+TC_KB_27,Verify Crawl Frequency dropdown options are available,User is logged in and Add Website to Monitor dialog is open,"1. Open ""Add Website to Monitor"" dialog; 2. Click on Crawl Frequency dropdown; 3. Verify dropdown opens and displays all options; 4. Verify ""Every 6 hours"" option is available; 5. Verify ""Every 12 hours"" option is available; 6. Verify ""Daily"" option is available; 7. Verify ""Weekly"" option is available; 8. Verify all options are clearly readable","Crawl Frequency dropdown should display all four frequency options: Every 6 hours, Every 12 hours, Daily, and Weekly",,,,,Yes
+TC_KB_28,Verify default Crawl Frequency selection,User is logged in and Add Website to Monitor dialog is open,"1. Open ""Add Website to Monitor"" dialog; 2. Verify Crawl Frequency dropdown shows a default value; 3. Verify default value is ""Every 6 hours"" or appropriate default; 4. Verify default selection is displayed before user interaction","Crawl Frequency dropdown should have a default value selected (e.g., Every 6 hours)",,,,,Yes
+TC_KB_29,Verify user can select Every 6 hours crawl frequency,User is logged in and Add Website to Monitor dialog is open,"1. Open ""Add Website to Monitor"" dialog; 2. Click on Crawl Frequency dropdown; 3. Select ""Every 6 hours"" option; 4. Verify option is selected and displayed in dropdown; 5. Enter valid website URL; 6. Save website source; 7. Verify crawl frequency is saved with selection","User should be able to select ""Every 6 hours"" crawl frequency and save it with website source",,,,,Yes
+TC_KB_30,Verify user can select Every 12 hours crawl frequency,User is logged in and Add Website to Monitor dialog is open,"1. Open ""Add Website to Monitor"" dialog; 2. Click on Crawl Frequency dropdown; 3. Select ""Every 12 hours"" option; 4. Verify option is selected and displayed in dropdown; 5. Enter valid website URL; 6. Save website source; 7. Verify crawl frequency is saved with selection","User should be able to select ""Every 12 hours"" crawl frequency and save it with website source",,,,,Yes
+TC_KB_31,Verify user can select Daily crawl frequency,User is logged in and Add Website to Monitor dialog is open,"1. Open ""Add Website to Monitor"" dialog; 2. Click on Crawl Frequency dropdown; 3. Select ""Daily"" option; 4. Verify option is selected and displayed in dropdown; 5. Enter valid website URL; 6. Save website source; 7. Verify crawl frequency is saved with selection","User should be able to select ""Daily"" crawl frequency and save it with website source",,,,,Yes
+TC_KB_32,Verify user can select Weekly crawl frequency,User is logged in and Add Website to Monitor dialog is open,"1. Open ""Add Website to Monitor"" dialog; 2. Click on Crawl Frequency dropdown; 3. Select ""Weekly"" option; 4. Verify option is selected and displayed in dropdown; 5. Enter valid website URL; 6. Save website source; 7. Verify crawl frequency is saved with selection","User should be able to select ""Weekly"" crawl frequency and save it with website source",,,,,Yes
+TC_KB_33,Verify crawl frequency is saved to database,User is logged in and creating website source,"1. Open ""Add Website to Monitor"" dialog; 2. Enter valid website URL; 3. Select specific crawl frequency (e.g., Daily); 4. Save website source; 5. Verify success message; 6. Edit the same website source; 7. Verify saved crawl frequency is displayed correctly in edit form; 8. Verify crawl frequency persists after page refresh",Selected crawl frequency should be saved to database and persist after save,,,,,Yes
+TC_KB_34,Verify Every 6 hours frequency triggers crawl correctly,User is logged in and has website source with Every 6 hours frequency,"1. Create website source with ""Every 6 hours"" crawl frequency; 2. Monitor crawling activity; 3. Verify website is crawled approximately every 6 hours; 4. Verify crawl schedule is maintained; 5. Verify timing is consistent",Website should be crawled every 6 hours when this frequency is selected,,,,,Yes
+TC_KB_35,Verify Topic form submission,User is logged in,"1. Navigate to Knowledge Base page; 
+2. Click ""+ Add Source"" button; 
+3. Click ""Topic"" option; 
+4. Fill in all required fields with valid topic information; 
+5. Submit form; 
+6. Verify Topic source is added to Knowledge Base",Topic source should be successfully added,,,,,Yes
+TC_KB_36,Verify user can successfully add a topic with name and category,User is logged in and on Knowledge Base page,"1. Navigate to Knowledge Base page; 
+2. Click ""Add Source"" button; 
+3. Select ""Topic"" from the dropdown menu; 
+4. Verify ""Add Topic"" dialog opens; 
+5. Enter topic name in ""Topic Name"" field (e.g., ""Fantasy Football Sleepers""); 
+6. Enter category in ""Category"" field (e.g., ""Rankings, Draft, News""); 
+7. Click ""Add Topic"" button; 
+8. Verify success notification is displayed; 
+9. Verify dialog closes; 
+10. Verify new topic appears in Knowledge Base sources list with Active status","Topic should be successfully created with name and category, displaying in Knowledge Base with Active status",,,,,Yes
+TC_KB_37,Verify topic name is required field,User is logged in and Add Topic dialog is open,"1. Open ""Add Topic"" dialog; 
+2. Leave ""Topic Name"" field empty; 
+3. Enter category in ""Category"" field (e.g., ""Rankings, Draft""); 
+4. Click ""Add Topic"" button; 
+5. Verify validation error is displayed for Topic Name field; 
+6. Verify error message indicates topic name is required; 
+7. Verify dialog remains open; 
+8. Verify topic is not created",Topic Name should be a required field with validation preventing submission when empty,,,,,Yes
+TC_KB_38,Verify category field accepts multiple comma-separated values,User is logged in and Add Topic dialog is open,"1. Open ""Add Topic"" dialog; 
+2. Enter topic name (e.g., ""Player Analysis""); 
+3. Enter multiple comma-separated categories in ""Category"" field (e.g., ""Rankings, Draft, News, Strategy""); 
+4. Verify all categories are accepted; 
+5. Click ""Add Topic"" button; 
+6. Verify topic is created successfully; 
+7. View topic details; 
+8. Verify all entered categories are saved and displayed correctly",Category field should accept multiple comma-separated values and save them correctly,,,,,No
+TC_KB_39,Verify Cancel button closes dialog without saving,User is logged in and Add Topic dialog is open,"1. Open ""Add Topic"" dialog; 
+2. Enter topic name in ""Topic Name"" field (e.g., ""Test Topic""); 
+3. Enter category in ""Category"" field (e.g., ""Test Category""); 
+4. Click ""Cancel"" button; 
+5. Verify dialog closes without saving; 
+6. Verify no topic is created; 
+7. Navigate to Knowledge Base sources; 
+8. Verify ""Test Topic"" does not appear in sources list",Cancel button should close the dialog without creating a topic or saving any data,,,,,No
+TC_KB_40,Verify Knowledge Base page responsive design on mobile,User is logged in,"1. Open Knowledge Base page on mobile device; 
+2. Verify all elements are visible; 
+3. Verify sources and articles are accessible; 
+4. Verify buttons are usable; 
+5. Verify layout adapts to mobile screen",Knowledge Base page should be properly displayed on mobile device,,,,,No
+TC_KB_41,Verify Knowledge Base page responsive design on tablet,User is logged in,"1. Open Knowledge Base page on tablet device; 
+2. Verify all elements are visible; 
+3. Verify layout adapts to tablet screen size; 
+4. Verify form is usable",Knowledge Base page should be properly displayed on tablet device,,,,,No
+TC_ML_01,Verify Media Library page loads successfully,User is logged in,"1. Navigate to Media Library page at https://v0-ai-content-generator-ruddy.vercel.app/dashboard/media; 
+2. Verify page loads completely; 
+3. Verify all elements are displayed",Media Library page should load successfully with all sections visible,,,,,Yes
+TC_ML_02,Verify Media Library page title is displayed,User is logged in,"1. Navigate to Media Library page; 
+2. Verify page title ""Media Library"" is displayed; 
+3. Verify subtitle ""AI-generated images and videos for your content"" is displayed",Page title and subtitle should be displayed correctly,,,,,Yes
+TC_ML_03,Verify Generate New Asset button functionality,User is logged in,"1. Navigate to Media Library page; 
+2. Click on ""Generate New Asset"" button; 
+3. Verify asset generation form or modal is displayed",Generate New Asset button should open asset generation form or modal,,,,,Yes
+TC_ML_04,Verify Total Assets statistic is displayed,User is logged in,"1. Navigate to Media Library page; 
+2. Verify ""Total Assets"" statistic is displayed; 
+3. Verify count is accurate (e.g., ""Total Assets 6""); 
+4. Verify count updates when assets are added/removed",Total Assets statistic should be displayed with accurate count,,,,,Yes
+TC_ML_05,Verify Images statistic is displayed,User is logged in,"1. Navigate to Media Library page; 
+2. Verify ""Images"" statistic is displayed; 
+3. Verify count is accurate (e.g., ""Images 5""); 
+4. Verify count updates when images are added/removed",Images statistic should be displayed with accurate count,,,,,Yes
+TC_ML_06,Verify Videos statistic is displayed,User is logged in,"1. Navigate to Media Library page; 
+2. Verify ""Videos"" statistic is displayed; 
+3. Verify count is accurate (e.g., ""Videos 1""); 
+4. Verify count updates when videos are added/removed",Videos statistic should be displayed with accurate count,,,,,Yes
+TC_ML_07,Verify Selected statistic is displayed,User is logged in,"1. Navigate to Media Library page; 
+2. Verify ""Selected"" statistic is displayed; 
+3. Verify count is accurate (e.g., ""Selected 0""); 
+4. Verify count updates when assets are selected/deselected",Selected statistic should be displayed with accurate count,,,,,No
+TC_ML_08,Verify image assets are displayed,User is logged in and has image assets,"1. Navigate to Media Library page; 
+2. Verify image assets are displayed; 
+3. Verify images are visible and properly rendered; 
+4. Verify image thumbnails are clear",Image assets should be displayed and visible,,,,,Yes
+TC_ML_09,Verify video assets are displayed,User is logged in and has video assets,"1. Navigate to Media Library page; 
+2. Verify video assets are displayed; 
+3. Verify video thumbnails are visible; 
+4. Verify video indicator is shown",Video assets should be displayed with visible thumbnails,,,,,Yes
+TC_ML_10,Verify multiple asset selection,User is logged in and has multiple media assets,"1. Navigate to Media Library page; 
+2. Select multiple assets; 
+3. Verify all selected assets are highlighted; 
+4. Verify Selected count reflects number of selected assets; 
+5. Verify bulk actions are available",Multiple assets should be selectable simultaneously,,,,,Yes
+TC_ML_11,Verify image preview displays correctly,User is logged in and has image assets,"1. Navigate to Media Library page; 
+2. Click on an image asset; 
+3. Verify image preview is displayed; 
+4. Verify image is clear and properly sized; 
+5. Verify image metadata is shown",Image preview should display correctly with metadata,,,,,Yes
+TC_ML_12,Verify filter by asset type (Images),User is logged in and has both image and video assets,"1. Navigate to Media Library page; 
+2. Click on filter for ""Images""; 
+3. Verify only image assets are displayed; 
+4. Verify Images count matches filtered results",Filter should display only image assets when Images filter is selected,,,,,Yes
+TC_ML_13,Verify filter by asset type (Videos),User is logged in and has both image and video assets,"1. Navigate to Media Library page; 
+2. Click on filter for ""Videos""; 
+3. Verify only video assets are displayed; 
+4. Verify Videos count matches filtered results",Filter should display only video assets when Videos filter is selected,,,,,Yes
+TC_ML_14,Verify search functionality,User is logged in and has multiple media assets,"1. Navigate to Media Library page; 
+2. Enter search term in search field (if available); 
+3. Verify assets are filtered based on search term; 
+4. Verify search results are displayed; 
+5. Verify search works for titles, tags, and models",Search should filter assets based on search term,,,,,Yes
+TC_ML_15,Verify Media Library page responsive design on mobile,User is logged in,"1. Open Media Library page on mobile device; 
+2. Verify all elements are visible; 
+3. Verify assets are displayed properly; 
+4. Verify buttons are usable; 
+5. Verify layout adapts to mobile screen",Media Library page should be properly displayed on mobile device,,,,,Yes
+TC_ML_16,Verify Media Library page responsive design on tablet,User is logged in,"1. Open Media Library page on tablet device; 
+2. Verify all elements are visible; 
+3. Verify layout adapts to tablet screen size; 
+4. Verify grid/list is properly displayed",Media Library page should be properly displayed on tablet device,,,,,Yes
+TC_ML_17,Verify asset generation form validation,User is logged in,"1. Navigate to Media Library page; 
+2. Click ""Generate New Asset"" button; 
+3. Leave required fields empty; 
+4. Attempt to submit; 
+5. Verify validation errors are displayed",Asset generation form should validate required fields,,,,,Yes
+TC_ML_18,Verify asset generation form submission,User is logged in,"1. Navigate to Media Library page; 
+2. Click ""Generate New Asset"" button; 
+3. Fill in all required fields with valid data; 
+4. Submit form; 5. Verify asset generation starts; 
+6. Verify new asset appears when complete",Asset generation form should successfully start asset generation,,,,,Yes
+TC_ML_19,Verify asset generation form cancellation,User is logged in,"1. Navigate to Media Library page; 
+2. Click ""Generate New Asset"" button; 
+3. Fill in some fields; 
+4. Click cancel or close button; 
+5. Verify form closes without submitting; 
+6. Verify no asset is generated",Asset generation form should be cancellable without submitting,,,,,Yes
+TC_ML_20,Verify asset generation progress tracking,User is logged in,"1. Navigate to Media Library page; 
+2. Click ""Generate New Asset"" button; 
+3. Fill form and submit; 
+4. Verify generation progress is displayed; 
+5. Verify progress updates in real-time; 
+6. Verify completion is indicated",Asset generation progress should be tracked and displayed,,,,,Yes
+TC_ML_21,Verify multiple asset generation queue,User is logged in,"1. Navigate to Media Library page; 
+2. Generate multiple assets in sequence; 
+3. Verify assets are queued properly; 
+4. Verify queue status is displayed; 
+5. Verify assets are generated in order",Multiple asset generations should be queued properly,,,,,Yes
+TC_CM_01,Verify Content Management page loads successfully,User is logged in,"1. Navigate to Content Management page at https://v0-ai-content-generator-ruddy.vercel.app/dashboard/content; 
+2. Verify page loads completely; 
+3. Verify all elements are displayed",Content Management page should load successfully with all sections visible,,,,,Yes
+TC_CM_02,Verify Content Management page title is displayed,User is logged in,"1. Navigate to Content Management page; 
+2. Verify page title ""Content Management"" is displayed; 
+3. Verify subtitle ""Review, approve, and export your AI-generated articles"" is displayed",Page title and subtitle should be displayed correctly,,,,,Yes
+TC_CM_03,Verify Total Articles statistic is displayed,User is logged in,"1. Navigate to Content Management page; 
+2. Verify ""Total Articles"" statistic is displayed; 
+3. Verify count is accurate (e.g., ""Total Articles 5""); 
+4. Verify count updates when articles are added/removed",Total Articles statistic should be displayed with accurate count,,,,,Yes
+TC_CM_04,Verify Pending Review statistic is displayed,User is logged in,"1. Navigate to Content Management page; 
+2. Verify ""Pending Review"" statistic is displayed; 
+3. Verify count is accurate (e.g., ""Pending Review 2""); 
+4. Verify count updates when articles are approved/rejected",Pending Review statistic should be displayed with accurate count,,,,,No
+TC_CM_05,Verify Approved statistic is displayed,User is logged in,"1. Navigate to Content Management page; 
+2. Verify ""Approved"" statistic is displayed; 
+3. Verify count is accurate (e.g., ""Approved 2""); 
+4. Verify count updates when articles are approved",Approved statistic should be displayed with accurate count,,,,,Yes
+TC_CM_06,Verify Rejected statistic is displayed,User is logged in,"1. Navigate to Content Management page; 
+2. Verify ""Rejected"" statistic is displayed; 
+3. Verify count is accurate (e.g., ""Rejected 1""); 
+4. Verify count updates when articles are rejected",Rejected statistic should be displayed with accurate count,,,,,Yes
+TC_CM_07,Verify Pending filter displays only pending articles,User is logged in and has pending articles,"1. Navigate to Content Management page; 
+2. Click on ""Pending"" filter tab; 
+3. Verify only articles with ""pending"" status are displayed; 
+4. Verify article count matches Pending Review statistic",Pending filter should display only pending articles,,,,,Yes
+TC_CM_08,Verify Approved filter displays only approved articles,User is logged in and has approved articles,"1. Navigate to Content Management page; 
+2. Click on ""Approved"" filter tab; 
+3. Verify only articles with ""approved"" status are displayed; 
+4. Verify article count matches Approved statistic",Approved filter should display only approved articles,,,,,Yes
+TC_CM_09,Verify Rejected filter displays only rejected articles,User is logged in and has rejected articles,"1. Navigate to Content Management page; 
+2. Click on ""Rejected"" filter tab; 
+3. Verify only articles with ""rejected"" status are displayed; 
+4. Verify article count matches Rejected statistic",Rejected filter should display only rejected articles,,,,,Yes
+TC_CM_10,Verify article list is displayed,User is logged in and has articles,"1. Navigate to Content Management page; 
+2. Verify article list is displayed; 
+3. Verify articles are shown in list format; 
+4. Verify articles are properly arranged",Article list should be displayed with all articles,,,,,Yes
+TC_CM_11,Verify article title is displayed,User is logged in and has articles,"1. Navigate to Content Management page; 
+2. Verify each article displays its title (e.g., ""Top 10 Fantasy Football Sleepers for 2025 Season""); 
+3. Verify title is clearly visible and readable",Article title should be displayed for each article,,,,,Yes
+TC_CM_12,Verify article status badge is displayed,User is logged in and has articles,"1. Navigate to Content Management page; 
+2. Verify each article displays status badge (pending/approved/rejected); 
+3. Verify status badge is visually distinct; 
+4. Verify status color coding is clear",Article status badge should be displayed and visually distinct,,,,,Yes
+TC_CM_13,Verify pending status badge is displayed correctly,User is logged in and has pending articles,"1. Navigate to Content Management page; 
+2. Verify articles with pending status show ""pending"" badge; 
+3. Verify badge color/style is appropriate",Pending status badge should be displayed correctly,,,,,Yes
+TC_CM_14,Verify approved status badge is displayed correctly,User is logged in and has approved articles,"1. Navigate to Content Management page; 
+2. Verify articles with approved status show ""approved"" badge; 
+3. Verify badge color/style is appropriate",Approved status badge should be displayed correctly,,,,,Yes
+TC_CM_15,Verify rejected status badge is displayed correctly,User is logged in and has rejected articles,"1. Navigate to Content Management page; 
+2. Verify articles with rejected status show ""rejected"" badge; 
+3. Verify badge color/style is appropriate",Rejected status badge should be displayed correctly,,,,,Yes
+TC_CM_16,Verify article word count is displayed,User is logged in and has articles,"1. Navigate to Content Management page; 
+2. Verify each article displays word count (e.g., ""1245 words""); 
+3. Verify word count is clearly visible",Article word count should be displayed for each article,,,,,Yes
+TC_CM_17,Verify article SEO score is displayed,User is logged in and has articles,"1. Navigate to Content Management page; 
+2. Verify each article displays SEO score (e.g., ""SEO: 92%""); 
+3. Verify SEO score is clearly visible; 
+4. Verify score format is consistent",Article SEO score should be displayed for each article,,,,,Yes
+TC_CM_18,Verify article timestamp is displayed,User is logged in and has articles,"1. Navigate to Content Management page; 
+2. Verify each article displays timestamp (e.g., ""2 hours ago"", ""1 day ago""); 
+3. Verify timestamp is clearly visible; 
+4. Verify timestamp format is readable",Article timestamp should be displayed for each article,,,,,Yes
+TC_CM_19,Verify article tags/keywords are displayed,User is logged in and has articles,"1. Navigate to Content Management page; 
+2. Verify each article displays tags/keywords (e.g., ""fantasy football"", ""sleepers+1""); 
+3. Verify tags are displayed in readable format; 
+4. Verify tags are properly separated",Article tags/keywords should be displayed for each article,,,,,Yes
+TC_CM_20,Verify article selection functionality,User is logged in and has articles,"1. Navigate to Content Management page; 
+2. Click on an article from the list; 
+3. Verify article is selected; 
+4. Verify selected article is visually highlighted",Article should be selectable and selection should be reflected,,,,,Yes
+TC_CM_21,Verify article details panel is displayed when article is selected,User is logged in and has articles,"1. Navigate to Content Management page; 
+2. Click on an article from the list; 
+3. Verify article details panel is displayed on the right side; 
+4. Verify panel shows article content and details",Article details panel should be displayed when article is selected,,,,,Yes
+TC_CM_22,Verify No Article Selected message is displayed when no article is selected,User is logged in,"1. Navigate to Content Management page; 
+2. Verify ""No Article Selected"" message is displayed in the right panel; 
+3. Verify message ""Select an article from the list to review or export"" is shown",No Article Selected message should be displayed when no article is selected,,,,,Yes
+TC_CM_23,Verify article details panel shows full article content,User is logged in and has articles,"1. Navigate to Content Management page; 
+2. Select an article; 
+3. Verify full article content is displayed in details panel; 
+4. Verify content is readable and properly formatted",Full article content should be displayed in details panel,,,,,Yes
+TC_CM_24,Verify article details panel shows article metadata,User is logged in and has articles,"1. Navigate to Content Management page; 
+2. Select an article; 
+3. Verify article metadata is displayed (title, word count, SEO score, tags, timestamp); 
+4. Verify all metadata is accurate",Article metadata should be displayed in details panel,,,,,Yes
+TC_CM_25,Verify Approve button functionality and check the statistics,User is logged in and has pending articles,"1. Navigate to Content Management page; 
+2. Select a pending article; 
+3. Click ""Approve"" button; 
+4. Verify article status changes to approved; 
+5. Verify statistics update",Article should be approved and status should update,,,,,Yes
+TC_CM_26,Verify Reject button functionality and check the statistics,User is logged in and has pending articles,"1. Navigate to Content Management page; 
+2. Select a pending article; 
+3. Click ""Reject"" button; 
+4. Verify article status changes to rejected; 
+5. Verify statistics update",Article should be rejected and status should update,,,,,Yes
+TC_CM_27,Verify approved article moves to Approved filter,User is logged in and has pending articles,"1. Navigate to Content Management page; 
+2. Select a pending article; 
+3. Click ""Approve"" button; 
+4. Click on ""Approved"" filter tab; 
+5. Verify approved article appears in Approved list",Approved article should appear in Approved filter,,,,,Yes
+TC_CM_28,Verify rejected article moves to Rejected filter,User is logged in and has pending articles,"1. Navigate to Content Management page; 
+2. Select a pending article; 
+3. Click ""Reject"" button; 
+4. Click on ""Rejected"" filter tab; 
+5. Verify rejected article appears in Rejected list",Rejected article should appear in Rejected filter,,,,,Yes
+TC_CM_29,Verify statistics update after approving article,User is logged in and has pending articles,"1. Navigate to Content Management page; 
+2. Note current statistics; 
+3. Approve a pending article; 
+4. Verify Pending Review count decreases; 
+5. Verify Approved count increases; 
+6. Verify Total Articles count remains same",Statistics should update correctly after approving article,,,,,Yes
+TC_CM_30,Verify statistics update after rejecting article,User is logged in and has pending articles,"1. Navigate to Content Management page; 
+2. Note current statistics; 
+3. Reject a pending article; 
+4. Verify Pending Review count decreases; 
+5. Verify Rejected count increases; 
+6. Verify Total Articles count remains same",Statistics should update correctly after rejecting article,,,,,Yes
+TC_CM_31,Verify Export button is displayed,User is logged in and has articles,"1. Navigate to Content Management page; 
+2. Select an article; 
+3. Verify ""Export"" button is displayed in details panel; 
+4. Verify button is clickable",Export button should be displayed and clickable,,,,,Yes
+TC_CM_32,Verify Export button functionality for single article,User is logged in and has articles,"1. Navigate to Content Management page; 
+2. Select an article; 
+3. Click ""Export"" button; 
+4. Verify export options are displayed or file is downloaded; 
+5. Verify exported content is correct",Article should be exportable in correct format,,,,,Yes
+TC_CM_33,Verify export options are displayed,User is logged in and has articles,"1. Navigate to Content Management page; 
+2. Select an article; 
+3. Click ""Export"" button; 
+4. Verify export format options are displayed (PDF, DOCX, TXT, etc.); 
+5. Verify options are selectable",Export format options should be displayed,,,,,Yes
+TC_CM_34,Verify export to PDF functionality,User is logged in and has articles,"1. Navigate to Content Management page; 
+2. Select an article; 
+3. Click ""Export"" button; 
+4. Select PDF format; 
+5. Verify PDF file is downloaded; 
+6. Verify PDF contains article content",Article should be exportable to PDF format,,,,,Yes
+TC_CM_35,Verify export to DOCX functionality,User is logged in and has articles,"1. Navigate to Content Management page; 
+2. Select an article; 
+3. Click ""Export"" button; 
+4. Select DOCX format; 
+5. Verify DOCX file is downloaded; 
+6. Verify DOCX contains article content",Article should be exportable to DOCX format,,,,,Yes
+TC_CM_36,Verify export to TXT functionality,User is logged in and has articles,"1. Navigate to Content Management page; 
+2. Select an article; 
+3. Click ""Export"" button; 
+4. Select TXT format; 
+5. Verify TXT file is downloaded; 
+6. Verify TXT contains article content",Article should be exportable to TXT format,,,,,Yes
+TC_CM_37,Verify bulk export functionality,User is logged in and has multiple articles,"1. Navigate to Content Management page; 
+2. Select multiple articles (if bulk selection is available); 
+3. Click bulk export option; 
+4. Verify all selected articles are exported; 
+5. Verify export is organized",Multiple articles should be exportable together,,,,,Yes
+TC_CM_38,Verify search functionality is displayed,User is logged in,"1. Navigate to Content Management page; 
+2. Verify search field is displayed (if available); 
+3. Verify search field is functional",Search field should be displayed and functional,,,,,Yes
+TC_CM_39,Verify search by article title,User is logged in and has articles,"1. Navigate to Content Management page; 
+2. Enter article title in search field; 
+3. Verify articles matching the title are displayed; 
+4. Verify search results are filtered correctly",Search should filter articles by title,,,,,Yes
+TC_CM_40,Verify search by tags/keywords,User is logged in and has articles,"1. Navigate to Content Management page; 
+2. Enter tag/keyword in search field; 
+3. Verify articles with matching tags are displayed; 
+4. Verify search results are filtered correctly",Search should filter articles by tags/keywords,,,,,Yes
+TC_CM_41,Verify Content Management page responsive design on mobile device,User is logged in,"1. Open Content Management page on mobile device; 
+2. Verify all elements are visible; 
+3. Verify article list is accessible; 
+4. Verify details panel is usable; 
+5. Verify layout adapts to mobile screen",Content Management page should be properly displayed on mobile device,,,,,Yes
+TC_CM_42,Verify Content Management page responsive design on tablet device,User is logged in,"1. Open Content Management page on tablet device; 
+2. Verify all elements are visible; 
+3. Verify layout adapts to tablet screen size; 
+4. Verify article list and details panel are usable",Content Management page should be properly displayed on tablet device,,,,,Yes
+TC_SE_01,Verify Settings page loads successfully,User is logged in,"1. Navigate to Settings page at https://v0-ai-content-generator-ruddy.vercel.app/dashboard/settings; 
+2. Verify page loads completely; 
+3. Verify all elements are displayed",Settings page should load successfully with all sections visible,,,,,Yes
+TC_SE_02,Verify Settings page title is displayed,User is logged in,"1. Navigate to Settings page; 
+2. Verify page title ""Settings"" is displayed; 
+3. Verify subtitle ""Manage your account settings and preferences"" is displayed",Page title and subtitle should be displayed correctly,,,,,Yes
+TC_SE_03,Verify Settings tabs are displayed,User is logged in,"1. Navigate to Settings page; 
+2. Verify ""Profile"" tab is displayed; 
+3. Verify ""Appearance"" tab is displayed; 
+4. Verify ""Content"" tab is displayed; 
+5. Verify all tabs are clickable","All Settings tabs Profile, Appearance, and content should be displayed and clickable",,,,,Yes
+TC_SE_04,Verify Profile tab is selected by default,User is logged in,"1. Navigate to Settings page; 
+2. Verify Profile tab is active/selected by default; 
+3. Verify Profile tab content is displayed",Profile tab should be selected by default and content should be visible,,,,,Yes
+TC_SE_05,Verify Profile tab,User is logged in,"1. Navigate to Settings page; 
+2. Click on ""Profile"" tab; 
+3. Verify Full name, Email address, Company, and Address","Profile tab should display with Full name, Email address, Company, and Address",,,,,Yes
+TC_SE_06,Verify Appearance tab navigation,User is logged in,"1. Navigate to Settings page; 
+2. Click on ""Appearance"" tab; 
+3. Verify Appearance tab content is displayed; 
+4. Verify appearance settings are visible",Appearance tab should display appearance settings when clicked,,,,,No
+TC_SE_07,Verify Content tab navigation,User is logged in,"1. Navigate to Settings page; 
+2. Click on ""Content"" tab; 
+3. Verify Content tab content is displayed; 
+4. Verify content settings are visible",Content tab should display content settings when clicked,,,,,No
+TC_SE_08,Verify Full Name field displays current value,User is logged in and has a full name set,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Verify Full Name field displays current user's full name; 
+4. Verify value is pre-populated",Full Name field should display current user's full name,,,,,No
+TC_SE_09,Verify Email Address field displays current value,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Verify Email Address field displays current user's email; 
+4. Verify value is pre-populated (e.g.","""demo@contentai.com"")",,,,,No
+TC_SE_10,Verify Company field displays current value,User is logged in and has a company set,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Verify Company field displays current user's company; 
+4. Verify value is pre-populated or empty if not set",Company field should display current user's company if set,,,,,No
+TC_SE_11,Verify Bio field displays current value,User is logged in and has a bio set,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Verify Bio field displays current user's bio; 
+4. Verify value is pre-populated (e.g.","""Fantasy football content creator focused on US Varsity plays"")",,,,,No
+TC_SE_12,Verify Save Changes button saves Full Name successfully,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Update Full Name field with new value; 
+4. Click ""Save Changes"" button; 
+5. Verify success message is displayed; 
+6. Verify Full Name is updated",Full Name should be saved successfully when Save Changes is clicked,,,,,Yes
+TC_SE_13,Verify Save Changes button saves Company successfully,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Update Company field with new value; 
+4. Click ""Save Changes"" button; 
+5. Verify success message is displayed; 
+6. Verify Company is updated",Company should be saved successfully when Save Changes is clicked,,,,,Yes
+TC_SE_14,Verify Save Changes button saves Bio successfully,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Update Bio field with new value; 
+4. Click ""Save Changes"" button; 
+5. Verify success message is displayed; 
+6. Verify Bio is updated",Bio should be saved successfully when Save Changes is clicked,,,,,Yes
+TC_SE_15,Verify Update email successfully,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Update Email address field with new valid email; 
+4. Click ""Save Changes"" button; 
+5. Verify success message is displayed; 
+6. Verify Email address is updated",Email should be saved successfully when Save Changes is clicked,,,,,Yes
+TC_SE_16,Verify Update with all empty input,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Update Full name, Email, Company, and Bio with empty input",Proper error message should be displayed,,,,,Yes
+TC_SE_17,Verify Save Changes button saves all profile fields together,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Update Full Name, Company, Email address, and Bio",All filelds should be updated properly,,,,,Yes
+TC_SE_18,Verify Updated changes are displayed in profile,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Update Full Name, Company, Email address, and Bio
+4. Check the updated values",All filelds should show updated values,,,,,Yes
+TC_SE_19,Verify Full Name field validation for empty value,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Clear Full Name field; 
+4. Click ""Save Changes"" button; 
+5. Verify validation error is displayed; 
+6. Verify save is prevented",Full Name field should show validation error if empty,,,,,Yes
+TC_SE_20,Verify Full Name field validation for special characters,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Enter special characters in Full Name field; 
+4. Click ""Save Changes"" button; 
+5. Verify validation error is displayed if invalid; 
+6. Verify save is prevented if invalid",Full Name field should validate special characters appropriately,,,,,Yes
+TC_SE_21,Verify Email Address field validation for invalid format,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Enter invalid email format in Email Address field; 
+4. Click ""Save Changes"" button; 
+5. Verify validation error is displayed; 
+6. Verify save is prevented",Email Address field should validate email format,,,,,Yes
+TC_SE_22,Verify Email Address field validation for empty value,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Clear Email Address field; 
+4. Click ""Save Changes"" button; 
+5. Verify validation error is displayed; 
+6. Verify save is prevented",Email Address field should show validation error if empty,,,,,Yes
+TC_SE_23,Verify Company field accepts valid input,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Enter valid company name in Company field; 
+4. Click ""Save Changes"" button; 
+5. Verify company is saved successfully",Company field should accept valid company names,,,,,No
+TC_SE_26,Verify New Password field is displayed,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Verify ""New Password"" label is displayed; 
+4. Verify New Password input field is displayed; 
+5. Verify field is password type (masked)",New Password field should be displayed as password type,,,,,Yes
+TC_SE_27,Verify Confirm New Password field is displayed,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Verify ""Confirm New Password"" label is displayed; 
+4. Verify Confirm New Password input field is displayed; 
+5. Verify field is password type (masked)",Confirm New Password field should be displayed as password type,,,,,Yes
+TC_SE_28,Verify Update Password button is displayed,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Verify ""Update Password"" button is displayed in Password section; 
+4. Verify button is clickable",Update Password button should be displayed and clickable,,,,,Yes
+TC_SE_29,Verify password update with valid current password,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Enter current password in Current Password field; 
+4. Enter new password in New Password field; 
+5. Enter same new password in Confirm New Password field; 
+6. Click ""Update Password"" button; 
+7. Verify success message is displayed; 
+8. Verify password is updated",Password should be updated successfully with valid current password,,,,,Yes
+TC_SE_30,Verify password update fails with incorrect current password,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Enter incorrect current password in Current Password field; 
+4. Enter new password in New Password field; 
+5. Enter same new password in Confirm New Password field; 
+6. Click ""Update Password"" button; 
+7. Verify error message is displayed; 
+8. Verify password is not updated",Password update should fail with error message if current password is incorrect,,,,,Yes
+TC_SE_31,Verify password validation for password mismatch,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Enter current password in Current Password field; 
+4. Enter new password in New Password field; 
+5. Enter different password in Confirm New Password field; 
+6. Click ""Update Password"" button; 
+7. Verify validation error is displayed; 
+8. Verify password is not updated",Password update should show validation error if passwords do not match,,,,,Yes
+TC_SE_32,Verify password validation for minimum length,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Enter current password in Current Password field; 
+4. Enter short password (less than minimum length) in New Password field; 
+5. Enter same short password in Confirm New Password field; 
+6. Click ""Update Password"" button; 
+7. Verify validation error is displayed; 
+8. Verify password is not updated",Password update should validate minimum password length,,,,,Yes
+TC_SE_33,Verify password validation for password strength requirements,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Enter current password in Current Password field; 
+4. Enter weak password (no special characters/numbers) in New Password field; 
+5. Enter same weak password in Confirm New Password field; 
+6. Click ""Update Password"" button; 
+7. Verify validation error or strength indicator is displayed; 
+8. Verify password is not updated if too weak",Password update should validate password strength requirements,,,,,Yes
+TC_SE_34,Verify password cannot be same as current password,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Enter current password in Current Password field; 
+4. Enter same password as current in New Password field; 
+5. Enter same password in Confirm New Password field; 
+6. Click ""Update Password"" button; 
+7. Verify validation error is displayed; 
+8. Verify password is not updated",Password update should prevent using same password as current password,,,,,Yes
+TC_SE_35,Verify password fields are cleared after successful update,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Update password successfully; 
+4. Verify all password fields are cleared after update; 
+5. Verify fields are ready for next update",Password fields should be cleared after successful password update,,,,,Yes
+TC_SE_36,Verify password show/hide toggle functionality,User is logged in,"1. Navigate to Settings page; 
+2. Click on Profile tab; 
+3. Enter password in any password field; 
+4. Click show/hide toggle icon (if available); 
+5. Verify password is visible when toggled; 
+6. Verify password is hidden when toggled again",Password fields should have show/hide toggle functionality,,,,,Yes
+TC_SE_37,Verify Appearance tab displays theme settings,User is logged in,"1. Navigate to Settings page; 
+2. Click on Appearance tab; 
+3. Verify theme settings section is displayed; 
+4. Verify theme options are available",Appearance tab should display theme settings,,,,,Yes
+TC_SE_38,Verify Light theme option is displayed,User is logged in,"1. Navigate to Settings page; 
+2. Click on Appearance tab; 
+3. Verify ""Light"" theme option is displayed; 
+4. Verify option is selectable",Light theme option should be displayed and selectable,,,,,Yes
+TC_SE_39,Verify Dark theme option is displayed,User is logged in,"1. Navigate to Settings page; 
+2. Click on Appearance tab; 
+3. Verify ""Dark"" theme option is displayed; 
+4. Verify option is selectable",Dark theme option should be displayed and selectable,,,,,Yes
+TC_SE_40,Verify System theme option is displayed,User is logged in,"1. Navigate to Settings page; 
+2. Click on Appearance tab; 
+3. Verify ""System"" theme option is displayed (if available); 
+4. Verify option is selectable",System theme option should be displayed if available,,,,,Yes
+TC_SE_41,Verify current theme is highlighted/selected,User is logged in,"1. Navigate to Settings page; 
+2. Click on Appearance tab; 
+3. Verify current active theme is highlighted or marked as selected; 
+4. Verify visual indicator shows current selection",Current theme should be visually indicated as selected,,,,,Yes
+TC_SE_42,Verify Content tab displays content-related settings,User is logged in,"1. Navigate to Settings page; 
+2. Click on Content tab; 
+3. Verify content settings section is displayed; 
+4. Verify content-related options are available",Content tab should display content-related settings,,,,,Yes
+TC_SE_43,Verify Content tab displays default content preferences,User is logged in,"1. Navigate to Settings page; 
+2. Click on Content tab; 
+3. Verify default content preferences are displayed; 
+4. Verify preferences are editable",Default content preferences should be displayed and editable,,,,,Yes
+TC_AIC_001,Verify AI Configuration page loads successfully,User is logged in as superadmin,"1. Navigate to AI Configuration page at https://v0-ai-content-generator-ruddy.vercel.app/dashboard/ai-config; 
+2. Verify page loads completely; 
+3. Verify all elements are displayed",AI Configuration page should load successfully with all sections visible,,,,,Yes
+TC_AIC_002,Verify AI Configuration page title is displayed,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Verify page title ""AI Configuration"" is displayed; 
+3. Verify subtitle ""Manage AI models, providers, and agentic workflows"" is displayed",Page title and subtitle should be displayed correctly,,,,,Yes
+TC_AIC_003,Verify Superadmin Only restriction is displayed,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Verify ""Superadmin Only"" label or banner is displayed; 
+3. Verify restriction is clearly indicated",Superadmin Only restriction should be displayed,,,,,Yes
+TC_AIC_004,Verify AI Configuration page prevents non-superadmin access,User is logged in as regular user,"1. Try to navigate to AI Configuration page URL directly; 
+2. Verify access is denied; 
+3. Verify error message is displayed; 
+4. Verify user is redirected or blocked",AI Configuration page should prevent non-superadmin access,,,,,Yes
+TC_AIC_005,Verify Configuration Section is displayed,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Verify ""Configuration Section"" header is displayed; 
+3. Verify all configuration subsections are visible",Configuration Section should be displayed with all subsections,,,,,Yes
+TC_AIC_006,Verify Ollama section is displayed,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Verify ""Ollama"" section is displayed; 
+3. Verify description ""Local model server configuration"" is shown",Ollama section should be displayed with description,,,,,Yes
+TC_AIC_007,Verify Cloud Providers section is displayed,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Verify ""Cloud Providers"" section is displayed; 
+3. Verify providers (OpenAI",Anthropic,,,,,No
+TC_AIC_008,Verify OpenRouter section is displayed,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Verify ""OpenRouter"" section is displayed; 
+3. Verify description ""Unified API for multiple models"" is shown",OpenRouter section should be displayed with description,,,,,No
+TC_AIC_009,Verify Model Catalog section is displayed,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Verify ""Model Catalog"" section is displayed; 
+3. Verify description ""All available models"" is shown",Model Catalog section should be displayed with description,,,,,Yes
+TC_AIC_010,Verify Model Groups section is displayed,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Verify ""Model Groups"" section is displayed; 
+3. Verify description ""Agentic workflows & routing"" is shown",Model Groups section should be displayed with description,,,,,Yes
+TC_AIC_011,Verify Export/Import section is displayed,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Verify ""Export/Import"" section is displayed; 
+3. Verify description ""Backup and restore settings"" is shown",Export/Import section should be displayed with description,,,,,Yes
+TC_AIC_012,Verify Ollama Server Configuration section is displayed,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Verify ""Ollama Server Configuration"" section is displayed; 
+3. Verify section is accessible",Ollama Server Configuration section should be displayed,,,,,Yes
+TC_AIC_013,Verify Server URL field displays current value,User is logged in as superadmin and Ollama is configured,"1. Navigate to AI Configuration page; 
+2. Verify Server URL field displays current Ollama server URL; 
+3. Verify value is pre-populated",Server URL field should display current server URL,,,,,No
+TC_AIC_014,Verify Server URL can be updated,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Enter new Server URL in Server URL field; 
+3. Save the configuration; 
+4. Verify URL is updated; 
+5. Verify success message is displayed",Server URL should be updateable,,,,,No
+TC_AIC_015,Verify Connection status is displayed,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Verify connection status indicator is displayed; 
+3. Verify status shows ""Connected to Ollama"" or connection state",Connection status should be displayed clearly,,,,,Yes
+TC_AIC_016,Verify Connection status shows connected state,User is logged in as superadmin and Ollama is connected,"1. Navigate to AI Configuration page; 
+2. Verify connection status shows ""Connected to Ollama""; 
+3. Verify status indicator is green or positive",Connection status should show connected state when connected,,,,,Yes
+TC_AIC_017,Verify Connection status updates when server URL changes,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Note current connection status; 
+3. Update Server URL to different address; 
+4. Save configuration; 
+5. Verify connection status updates accordingly",Connection status should update when server URL changes,,,,,Yes
+TC_AIC_018,Verify Number of models is displayed,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Verify model count is displayed (e.g.","""3 models""); 3. Verify count is accurate",,,,,Yes
+TC_AIC_019,"Verify Model name, size, and modification date is displayed for each model",User is logged in as superadmin and has installed models,"1. Navigate to AI Configuration page; 
+2. Verify each model displays its name (e.g.",llama3.1:8b,,,,,Yes
+TC_AIC_020,Verify Pull Model button opens model selection dialog,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on ""Pull Model"" button; 
+3. Verify model selection dialog or dropdown is opened; 
+4. Verify available models are listed",Pull Model button should open model selection interface,,,,,Yes
+TC_AIC_021,Verify Pull Model functionality works correctly,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on ""Pull Model"" button; 
+3. Select a model from available models; 
+4. Confirm pull operation; 
+5. Verify model download starts; 
+6. Verify progress is shown",Pull Model should download and install selected model,,,,,Yes
+TC_AIC_022,Verify Pull Model shows download progress,User is logged in as superadmin,"1. Navigate to AI Configuration page; 2. Click on ""Pull Model"" button; 3. Select a model; 4. Start pull operation; 5. Verify download progress indicator is displayed; 6. Verify progress percentage or status is shown",Pull Model should show download progress,,,,,Yes
+TC_AIC_023,Verify Pull Model adds model to installed list,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Note current number of installed models; 
+3. Pull a new model; 
+4. Wait for completion; 
+5. Verify new model appears in installed models list; 
+6. Verify model count increases",Pull Model should add model to installed list after completion,,,,,Yes
+TC_AIC_024,Verify Model can be deleted from installed list,User is logged in as superadmin and has installed models,"1. Navigate to AI Configuration page; 
+2. Verify delete option is available for each model (if available); 
+3. Click delete on a model; 
+4. Confirm deletion; 
+5. Verify model is removed from list",Model should be deletable from installed list if feature is available,,,,,Yes
+TC_AIC_025,Verify Model deletion updates model count,User is logged in as superadmin and has multiple installed models,"1. Navigate to AI Configuration page; 
+2. Note current model count; 
+3. Delete a model; 
+4. Verify model count decreases; 
+5. Verify count is accurate",Model deletion should update model count,,,,,Yes
+TC_AIC_026,Verify Cloud Providers section displays OpenAI,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Cloud Providers section; 
+3. Verify ""OpenAI"" provider is displayed; 
+4. Verify OpenAI configuration options are available",OpenAI provider should be displayed in Cloud Providers section,,,,,No
+TC_AIC_027,Verify Cloud Providers section displays Anthropic,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Cloud Providers section; 
+3. Verify ""Anthropic"" provider is displayed; 
+4. Verify Anthropic configuration options are available",Anthropic provider should be displayed in Cloud Providers section,,,,,No
+TC_AIC_028,Verify Cloud Providers section displays Google AI,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Cloud Providers section; 
+3. Verify ""Google AI"" provider is displayed; 
+4. Verify Google AI configuration options are available",Google AI provider should be displayed in Cloud Providers section,,,,,No
+TC_AIC_029,Verify OpenAI API key can be configured,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Cloud Providers section; 
+3. Click on OpenAI; 
+4. Verify API key input field is displayed; 
+5. Enter API key; 
+6. Save configuration; 
+7. Verify API key is saved",OpenAI API key should be configurable,,,,,No
+TC_AIC_030,Verify Anthropic API key can be configured,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Cloud Providers section; 
+3. Click on Anthropic; 
+4. Verify API key input field is displayed; 
+5. Enter API key; 
+6. Save configuration; 
+7. Verify API key is saved",Anthropic API key should be configurable,,,,,No
+TC_AIC_031,Verify Google AI API key can be configured,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Cloud Providers section; 
+3. Click on Google AI; 
+4. Verify API key input field is displayed; 
+5. Enter API key; 
+6. Save configuration; 
+7. Verify API key is saved",Google AI API key should be configurable,,,,,No
+TC_AIC_032,Verify API keys are masked in display,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Cloud Providers section; 
+3. Verify API key fields show masked values (e.g.",****); 4. Verify keys are not fully visible,,,,,No
+TC_AIC_033,Verify API key validation for invalid format,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Cloud Providers section; 
+3. Enter invalid API key format; 
+4. Save configuration; 
+5. Verify validation error is displayed; 
+6. Verify save is prevented",API key should validate format,,,,,No
+TC_AIC_034,Verify OpenRouter section displays configuration options,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on OpenRouter section; 
+3. Verify OpenRouter API key field is displayed; 
+4. Verify configuration options are available",OpenRouter section should display configuration options,,,,,Yes
+TC_AIC_035,Verify OpenRouter API key can be configured,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on OpenRouter section; 
+3. Enter OpenRouter API key; 
+4. Save configuration; 
+5. Verify API key is saved",OpenRouter API key should be configurable,,,,,No
+TC_AIC_036,Verify Model Catalog displays all available models,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Model Catalog section; 
+3. Verify list of available models is displayed; 
+4. Verify models are searchable or filterable",Model Catalog should display all available models,,,,,Yes
+TC_AIC_037,Verify Model Catalog displays model details,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Model Catalog section; 
+3. Verify each model displays details (name",provider,,,,,Yes
+TC_AIC_038,Verify Model Catalog allows filtering models,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Model Catalog section; 
+3. Verify filter options are available (if available); 
+4. Apply filter; 
+5. Verify filtered results are displayed",Model Catalog should allow filtering models if available,,,,,Yes
+TC_AIC_039,Verify Model Catalog allows searching models,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Model Catalog section; 
+3. Verify search field is available; 
+4. Enter search term; 
+5. Verify matching models are displayed",Model Catalog should allow searching models,,,,,Yes
+TC_AIC_040,Verify Model Groups section displays workflow configurations,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Model Groups section; 
+3. Verify agentic workflows are displayed; 
+4. Verify routing configurations are available",Model Groups should display workflow configurations,,,,,Yes
+TC_AIC_041,Verify Model Groups can be created,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Model Groups section; 
+3. Click ""Create Group"" button (if available); 
+4. Enter group name and configuration; 
+5. Save group; 
+6. Verify group is created",Model Groups should be createable if feature is available,,,,,Yes
+TC_AIC_042,Verify Model Groups can be edited,User is logged in as superadmin and has model groups,"1. Navigate to AI Configuration page; 
+2. Click on Model Groups section; 
+3. Click edit on a model group; 
+4. Modify configuration; 
+5. Save changes; 
+6. Verify changes are saved",Model Groups should be editable if feature is available,,,,,Yes
+TC_AIC_043,Verify Model Groups can be deleted,User is logged in as superadmin and has model groups,"1. Navigate to AI Configuration page; 
+2. Click on Model Groups section; 
+3. Click delete on a model group; 
+4. Confirm deletion; 
+5. Verify group is removed",Model Groups should be deletable if feature is available,,,,,Yes
+TC_AIC_044,Verify Export/Import section displays export option,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Export/Import section; 
+3. Verify ""Export"" button or option is displayed; 
+4. Verify export functionality is available",Export option should be displayed in Export/Import section,,,,,Yes
+TC_AIC_045,Verify Export functionality exports configuration,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Export/Import section; 
+3. Click ""Export"" button; 
+4. Verify configuration file is downloaded; 
+5. Verify file contains all settings",Export should download configuration file with all settings,,,,,Yes
+TC_AIC_046,Verify Export file format is correct,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Export/Import section; 
+3. Click ""Export"" button; 
+4. Download configuration file; 
+5. Verify file format is correct (JSON",YAML,,,,,Yes
+TC_AIC_047,Verify Import section displays import option,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Export/Import section; 
+3. Verify ""Import"" button or option is displayed; 
+4. Verify import functionality is available",Import option should be displayed in Export/Import section,,,,,Yes
+TC_AIC_048,Verify Import functionality imports configuration,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Export/Import section; 
+3. Click ""Import"" button; 
+4. Select configuration file; 
+5. Confirm import; 
+6. Verify configuration is imported; 
+7. Verify settings are restored",Import should restore configuration from file,,,,,Yes
+TC_AIC_049,Verify Import validates file format,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Export/Import section; 
+3. Click ""Import"" button; 
+4. Select invalid file format; 
+5. Verify validation error is displayed; 
+6. Verify import is prevented",Import should validate file format,,,,,Yes
+TC_AIC_050,Verify Import shows confirmation dialog,User is logged in as superadmin,"1. Navigate to AI Configuration page; 
+2. Click on Export/Import section; 
+3. Click ""Import"" button; 
+4. Select configuration file; 
+5. Verify confirmation dialog is displayed; 
+6. Verify user can confirm or cancel",Import should show confirmation dialog before importing,,,,,Yes
+TC_AIC_051,Verify AI Configuration page responsive design on mobile,User is logged in as superadmin,"1. Open AI Configuration page on mobile device; 
+2. Verify all sections are accessible; 
+3. Verify all form fields are usable; 
+4. Verify layout adapts to mobile screen; 
+5. Verify buttons are clickable",AI Configuration page should be properly displayed on mobile,,,,,Yes
+TC_AIC_052,Verify AI Configuration page responsive design on tablet,User is logged in as superadmin,"1. Open AI Configuration page on tablet device; 
+2. Verify all sections are accessible; 
+3. Verify layout adapts to tablet screen; 
+4. Verify all elements are visible",AI Configuration page should be properly displayed on tablet,,,,,Yes

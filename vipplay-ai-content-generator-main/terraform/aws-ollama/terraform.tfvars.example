@@ -1,0 +1,61 @@
+# VIPContentAI - AWS Ollama Terraform Variables Example
+# Copy this file to terraform.tfvars and fill in your values
+
+# AWS Configuration
+aws_region  = "us-east-1"  # or us-west-2
+environment = "prod"       # dev, staging, or prod
+
+# EC2 Instance Configuration
+instance_type = "g6e.xlarge"  # g6.xlarge (L4) or g6e.xlarge (L40S)
+key_name      = "your-ssh-key-name"
+
+# Networking (leave empty to use default VPC)
+vpc_id    = ""
+subnet_id = ""
+
+# SSH Access (IMPORTANT: Restrict to your office IP)
+ssh_allowed_cidrs = ["1.2.3.4/32"]  # Your office/home IP
+
+# Storage Configuration
+root_volume_size       = 300   # GB
+root_volume_iops       = 3000  # IOPS for gp3
+root_volume_throughput = 125   # MB/s for gp3
+
+# Domain & SSL
+domain_name = "api.vipcontentai.com"
+admin_email = "admin@vipcontentai.com"
+
+# API Security
+# Generate a secure random key: openssl rand -base64 48
+api_key = "your-secure-api-key-at-least-32-characters-long-change-this"
+
+# Ollama Configuration
+ollama_models = [
+  "llama3.1:8b-instruct-q4_K_M",
+  "mistral:7b-instruct-q4_K_M",
+  "nomic-embed-text:latest"
+]
+
+ollama_num_parallel = 3    # Number of parallel requests
+ollama_max_loaded   = 3    # Max models loaded simultaneously
+ollama_keep_alive   = "5m" # Keep-alive duration
+
+# Optional: Elastic IP (recommended for production)
+allocate_eip = true
+
+# Optional: CloudWatch Monitoring
+enable_detailed_monitoring = true
+log_retention_days         = 30
+
+# Optional: Route53 DNS (leave empty to manually configure DNS)
+route53_zone_id = ""  # Your Route53 Hosted Zone ID
+
+# Optional: CloudWatch Alarms (leave empty to skip)
+alarm_sns_topic_arn = ""  # SNS topic ARN for alarm notifications
+
+# Additional Tags
+additional_tags = {
+  CostCenter = "AI-Infrastructure"
+  Owner      = "DevOps-Team"
+  Backup     = "Daily"
+}

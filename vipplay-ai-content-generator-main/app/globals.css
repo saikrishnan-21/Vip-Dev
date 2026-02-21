@@ -1,0 +1,574 @@
+@import "tailwindcss";
+
+@theme {
+  /* Deep space dark theme - matching Crystal Agent Forge */
+  --color-background: hsl(222 47% 8%);
+  --color-foreground: hsl(210 40% 98%);
+
+  --color-card: hsl(222 47% 11%);
+  --color-card-foreground: hsl(210 40% 98%);
+
+  --color-popover: hsl(222 47% 11%);
+  --color-popover-foreground: hsl(210 40% 98%);
+
+  /* Cyan/Teal primary colors - matching Crystal Agent Forge */
+  --color-primary: hsl(180 100% 45%);
+  --color-primary-foreground: hsl(222 47% 8%);
+
+  --color-secondary: hsl(222 47% 15%);
+  --color-secondary-foreground: hsl(210 40% 98%);
+
+  --color-muted: hsl(222 30% 18%);
+  --color-muted-foreground: hsl(215 20% 55%);
+
+  /* Violet/Purple accent */
+  --color-accent: hsl(270 60% 60%);
+  --color-accent-foreground: hsl(210 40% 98%);
+
+  --color-destructive: hsl(0 84% 60%);
+  --color-destructive-foreground: hsl(210 40% 98%);
+
+  --color-border: hsl(222 30% 18%);
+  --color-input: hsl(222 30% 14%);
+  --color-ring: hsl(180 100% 45%);
+
+  --radius-lg: 0.75rem;
+
+  /* Custom colors - Crystal Agent Forge palette */
+  --color-cyan-glow: hsl(180 100% 45%);
+  --color-blue-accent: hsl(200 100% 55%);
+  --color-violet-accent: hsl(270 60% 60%);
+  --color-success: hsl(160 84% 40%);
+  --color-warning: hsl(38 92% 50%);
+
+  /* Gradients - matching Crystal Agent Forge */
+  --background-image-gradient-primary: linear-gradient(
+    135deg,
+    hsl(180, 100%, 45%) 0%,
+    hsl(200, 100%, 55%) 100%
+  );
+  --background-image-gradient-accent: linear-gradient(
+    135deg,
+    hsl(200, 100%, 55%) 0%,
+    hsl(270, 60%, 60%) 100%
+  );
+  --background-image-gradient-button: linear-gradient(
+    90deg,
+    hsl(180, 100%, 45%) 0%,
+    hsl(200, 100%, 55%) 40%,
+    hsl(270, 60%, 60%) 100%
+  );
+  --background-image-gradient-card: linear-gradient(
+    180deg,
+    hsl(222, 47%, 13%) 0%,
+    hsl(222, 47%, 9%) 100%
+  );
+
+  /* Shadows - matching Crystal Agent Forge glow effects */
+  --shadow-glow: 0 0 40px -5px hsl(180, 100%, 45%, 0.35);
+  --shadow-button-glow: 0 8px 32px -4px hsl(180, 100%, 45%, 0.4);
+  --shadow-card: 0 4px 24px -4px hsl(0, 0%, 0%, 0.4);
+
+  --color-sidebar-background: hsl(222 47% 9%);
+  --color-sidebar-foreground: hsl(210 40% 98%);
+  --color-sidebar-primary: hsl(180 100% 45%);
+  --color-sidebar-primary-foreground: hsl(222 47% 8%);
+  --color-sidebar-accent: hsl(222 47% 15%);
+  --color-sidebar-accent-foreground: hsl(210 40% 98%);
+  --color-sidebar-border: hsl(222 30% 18%);
+  --color-sidebar-ring: hsl(180 100% 45%);
+}
+
+/* Original CSS variables for non-Tailwind usage or backward compatibility */
+:root {
+  --gradient-primary: linear-gradient(
+    135deg,
+    hsl(180, 100%, 45%) 0%,
+    hsl(200, 100%, 55%) 100%
+  );
+  --gradient-accent: linear-gradient(
+    135deg,
+    hsl(200, 100%, 55%) 0%,
+    hsl(270, 60%, 60%) 100%
+  );
+  --gradient-button: linear-gradient(
+    90deg,
+    hsl(180, 100%, 45%) 0%,
+    hsl(200, 100%, 55%) 40%,
+    hsl(270, 60%, 60%) 100%
+  );
+  --gradient-card: linear-gradient(
+    180deg,
+    hsl(222, 47%, 13%) 0%,
+    hsl(222, 47%, 9%) 100%
+  );
+  --shadow-glow: 0 0 40px -5px hsl(180, 100%, 45%, 0.35);
+  --shadow-button-glow: 0 8px 32px -4px hsl(180, 100%, 45%, 0.4);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: "Alliance No 2", "Poppins", sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Alliance No 2", "Poppins", sans-serif;
+  }
+
+  code,
+  pre,
+  .font-mono {
+    font-family: "JetBrains Mono", monospace;
+  }
+}
+
+@layer components {
+  /* Floating particles animation */
+  .particles-bg {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: hsl(180, 100%, 45%, 0.5);
+    border-radius: 50%;
+    animation: float-particle 20s infinite ease-in-out;
+  }
+
+  .particle::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    border-radius: inherit;
+    filter: blur(2px);
+    animation: pulse-glow 3s infinite ease-in-out;
+  }
+
+  @keyframes float-particle {
+    0%,
+    100% {
+      transform: translateY(0) translateX(0);
+      opacity: 0.3;
+    }
+    25% {
+      transform: translateY(-30px) translateX(20px);
+      opacity: 0.6;
+    }
+    50% {
+      transform: translateY(-10px) translateX(-15px);
+      opacity: 0.4;
+    }
+    75% {
+      transform: translateY(-40px) translateX(10px);
+      opacity: 0.7;
+    }
+  }
+
+  @keyframes pulse-glow {
+    0%,
+    100% {
+      opacity: 0.5;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.5);
+    }
+  }
+
+  /* Progress bar animation */
+  .progress-bar {
+    background: var(--gradient-primary);
+    transition: width 0.5s ease-out;
+  }
+
+  /* Card hover effects - matching Crystal Agent Forge */
+  .card-hover {
+    transition: all 0.4s ease;
+    border: 1px solid hsl(var(--border));
+    position: relative;
+  }
+
+  .card-hover:hover {
+    border-color: hsl(var(--primary) / 0.4);
+    box-shadow: 0 0 35px -10px hsl(180, 100%, 45%, 0.3);
+    transform: translateY(-3px);
+  }
+
+  /* Gradient text */
+  .text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-accent {
+    background: var(--gradient-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Button gradient - matching Crystal Agent Forge */
+  .btn-gradient {
+    background: var(--gradient-button);
+    background-size: 200% 100%;
+    background-position: 0% 50%;
+    box-shadow: var(--shadow-button-glow);
+    transition: all 0.4s ease;
+  }
+
+  .btn-gradient:hover {
+    background-position: 100% 50%;
+    filter: brightness(1.15);
+    box-shadow: 0 12px 40px -4px hsl(180, 100%, 45%, 0.5);
+    transform: translateY(-2px);
+  }
+
+  /* Input styling */
+  .input-dark {
+    background: hsl(var(--input));
+    border: 1px solid hsl(var(--border));
+    transition: all 0.3s ease;
+  }
+
+  .input-dark:focus {
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 2px hsl(var(--primary) / 0.2);
+  }
+
+  /* Badge styles */
+  .badge-primary {
+    background: hsl(var(--primary) / 0.15);
+    color: hsl(var(--primary));
+    border: 1px solid hsl(var(--primary) / 0.3);
+  }
+
+  .badge-success {
+    background: hsl(var(--success) / 0.15);
+    color: hsl(var(--success));
+    border: 1px solid hsl(var(--success) / 0.3);
+  }
+
+  .badge-warning {
+    background: hsl(var(--warning) / 0.15);
+    color: hsl(var(--warning));
+    border: 1px solid hsl(var(--warning) / 0.3);
+  }
+
+  /* Fade in animation */
+  .fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Slide up animation */
+  .slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Stagger children animation */
+  .stagger-children > * {
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out forwards;
+  }
+
+  .stagger-children > *:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+  .stagger-children > *:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  .stagger-children > *:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  .stagger-children > *:nth-child(4) {
+    animation-delay: 0.4s;
+  }
+  .stagger-children > *:nth-child(5) {
+    animation-delay: 0.5s;
+  }
+
+  /* Icon container - matching Crystal Agent Forge */
+  .icon-container {
+    background: var(--gradient-button);
+    background-size: 200% 100%;
+    box-shadow: var(--shadow-glow);
+    transition: all 0.3s ease;
+  }
+
+  .icon-container:hover {
+    box-shadow: 0 0 50px -5px hsl(180, 100%, 45%, 0.5);
+  }
+
+  /* Selection card - matching Crystal Agent Forge */
+  .selection-card {
+    background: var(--gradient-card);
+    border: 1px solid hsl(var(--border));
+    transition: all 0.4s ease;
+    cursor: pointer;
+    position: relative;
+  }
+
+  .selection-card:hover,
+  .selection-card.selected {
+    border-color: hsl(var(--primary) / 0.6);
+    box-shadow: 0 0 40px -10px hsl(180, 100%, 45%, 0.35);
+  }
+
+  .selection-card.selected {
+    background: linear-gradient(
+      180deg,
+      hsl(222, 47%, 15%) 0%,
+      hsl(222, 47%, 11%) 100%
+    );
+    border-color: hsl(var(--primary));
+  }
+
+  /* Bottom gradient bar on cards */
+  .gradient-bar-bottom {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gradient-bar-bottom::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--gradient-button);
+    opacity: 0.8;
+  }
+
+  /* 3D Crystal styles */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .crystal-gem {
+    position: relative;
+    width: 120px;
+    height: 200px;
+    transform-style: preserve-3d;
+  }
+
+  .crystal-face {
+    position: absolute;
+    background: linear-gradient(
+      135deg,
+      hsl(180, 100%, 45%, 0.3) 0%,
+      hsl(270, 60%, 60%, 0.4) 50%,
+      hsl(180, 100%, 50%, 0.2) 100%
+    );
+    border: 1px solid hsl(180, 100%, 45%, 0.4);
+    backdrop-filter: blur(4px);
+  }
+
+  .crystal-front {
+    width: 80px;
+    height: 160px;
+    left: 20px;
+    top: 20px;
+    transform: translateZ(30px);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background: linear-gradient(
+      180deg,
+      hsl(270, 60%, 50%, 0.5) 0%,
+      hsl(180, 100%, 45%, 0.3) 30%,
+      hsl(220, 60%, 30%, 0.4) 70%,
+      hsl(180, 100%, 40%, 0.3) 100%
+    );
+  }
+
+  .crystal-back {
+    width: 80px;
+    height: 160px;
+    left: 20px;
+    top: 20px;
+    transform: translateZ(-30px) rotateY(180deg);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    background: linear-gradient(
+      180deg,
+      hsl(220, 50%, 20%, 0.6) 0%,
+      hsl(180, 80%, 35%, 0.4) 50%,
+      hsl(270, 50%, 40%, 0.3) 100%
+    );
+  }
+
+  .crystal-left {
+    width: 60px;
+    height: 160px;
+    left: -10px;
+    top: 20px;
+    transform: rotateY(-60deg) translateZ(20px);
+    clip-path: polygon(100% 0%, 100% 100%, 0% 75%, 0% 25%);
+    background: linear-gradient(
+      180deg,
+      hsl(180, 100%, 45%, 0.4) 0%,
+      hsl(200, 80%, 40%, 0.3) 50%,
+      hsl(220, 60%, 30%, 0.4) 100%
+    );
+  }
+
+  .crystal-right {
+    width: 60px;
+    height: 160px;
+    right: -10px;
+    top: 20px;
+    transform: rotateY(60deg) translateZ(20px);
+    clip-path: polygon(0% 0%, 0% 100%, 100% 75%, 100% 25%);
+    background: linear-gradient(
+      180deg,
+      hsl(270, 60%, 55%, 0.5) 0%,
+      hsl(280, 50%, 45%, 0.4) 50%,
+      hsl(180, 80%, 40%, 0.3) 100%
+    );
+  }
+
+  .crystal-top {
+    width: 80px;
+    height: 60px;
+    left: 20px;
+    top: -10px;
+    transform: rotateX(70deg) translateZ(30px);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    background: linear-gradient(
+      135deg,
+      hsl(180, 100%, 50%, 0.6) 0%,
+      hsl(200, 90%, 55%, 0.5) 50%,
+      hsl(180, 100%, 45%, 0.4) 100%
+    );
+  }
+
+  .crystal-bottom {
+    width: 80px;
+    height: 60px;
+    left: 20px;
+    bottom: -10px;
+    transform: rotateX(-70deg) translateZ(30px);
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+    background: linear-gradient(
+      135deg,
+      hsl(220, 50%, 25%, 0.5) 0%,
+      hsl(180, 70%, 35%, 0.4) 100%
+    );
+  }
+
+  /* Glass card style */
+  .glass-card {
+    background: hsl(var(--card) / 0.6);
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.75rem;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+  }
+
+  .glass-card:hover {
+    border-color: hsl(var(--primary) / 0.3);
+    box-shadow: 0 0 20px -5px hsl(180, 100%, 45%, 0.15);
+  }
+
+  /* Radial gradient background */
+  .bg-gradient-radial {
+    background: radial-gradient(
+      ellipse at center,
+      var(--tw-gradient-from) 0%,
+      var(--tw-gradient-via) 50%,
+      var(--tw-gradient-to) 100%
+    );
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: "Playfair Display", serif;
+  }
+
+  .font-sans {
+    font-family: "Alliance No 2", "Poppins", sans-serif;
+  }
+
+  .font-mono {
+    font-family: "JetBrains Mono", monospace;
+  }
+
+  .font-alliance {
+    font-family: "Alliance No 2", sans-serif;
+  }
+}
+
+@font-face {
+  font-family: "Alliance No 2";
+  src: url("/fonts/AllianceNo2-SemiBold.otf") format("opentype");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Alliance No 2";
+  src: url("/fonts/AllianceNo2-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Alliance No 2";
+  src: url("/fonts/AllianceNo2-Bold.otf") format("opentype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Ensure text is always visible during font load */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

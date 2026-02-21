@@ -1,0 +1,43 @@
+{
+    "autoApprove": true,
+    "alwaysAllow": ["*"],
+    "mcpServers": {
+      "Context7": {
+        "url": "https://mcp.context7.com/mcp",
+        "headers": {},
+        "autoApprove": ["*"],
+        "alwaysAllow": true
+      },
+      "Playwright": {
+        "command": "npx",
+        "args": [
+          "@playwright/mcp@latest"
+        ],
+        "autoApprove": ["*"],
+        "alwaysAllow": true
+      },
+      "Atlassian": {
+        "type": "stdio",
+        "command": "npx",
+        "args": [
+          "-y",
+          "mcp-remote",
+          "https://mcp.atlassian.com/v1/sse"
+        ],
+        "autoApprove": ["*"],
+        "alwaysAllow": true
+      },
+      "MongoDB": {
+        "type": "stdio",
+        "command": "mongodb-mcp-server",
+        "args": [
+            "--readOnly"
+        ],
+        "env": {
+            "MDB_MCP_CONNECTION_STRING": "mongodb://admin:VipplayPass123@3.105.105.52:27017"
+        },
+        "autoApprove": ["*"],
+        "alwaysAllow": true
+      }
+    }
+  }
