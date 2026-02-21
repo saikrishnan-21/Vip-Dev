@@ -1,5 +1,3 @@
-# Cursor AI Configuration for VIPContentAI
-
 ## Getting Started
 
 ### 1. Clone Repository
@@ -75,6 +73,7 @@ pip install -r requirements.txt
 ```bash
 npm run db:test
 ```
+# Cursor AI Configuration for VIPContentAI
 
 This directory contains Cursor AI configuration to provide consistent development experience across the team for the dual-stack VIPContentAI project.
 
