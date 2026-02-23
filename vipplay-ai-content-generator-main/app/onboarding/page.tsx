@@ -66,10 +66,14 @@ export default function Onboarding() {
 
   const isDark = effectiveTheme === "dark";
 
-  // Protection: if not logged in, go to login
+  // Protection: if not logged in, go to login; if finished, go to dashboard
   useEffect(() => {
-    if (!loading && !user) {
-      router.replace("/login");
+    if (!loading) {
+      if (!user) {
+        router.replace("/login");
+      } else if (user.onboardingCompleted) {
+        router.replace("/dashboard");
+      }
     }
   }, [user, loading, router]);
 

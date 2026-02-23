@@ -11,9 +11,28 @@ const featurePills = [
   { title: "FuzeBoxVision", subtitle: "Understand + Recommend" },
 ];
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+
 const LandingPage = () => {
   const { effectiveTheme, theme, setTheme } = useTheme();
+  const { user, loading } = useAuth();
+  const router = useRouter();
   const isDark = effectiveTheme === "dark";
+
+  // Redirect authenticated users
+  useEffect(() => {
+    if (!loading && user) {
+      if (!user.accountType) {
+        router.replace("/account-type");
+      } else if (!user.onboardingCompleted) {
+        router.replace("/onboarding");
+      } else {
+        router.replace("/dashboard");
+      }
+    }
+  }, [user, loading, router]);
 
   return (
     <>
@@ -63,52 +82,66 @@ const LandingPage = () => {
             />
           </div>
 
-          {/* Theme Toggle */}
-          <button
-            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold transition-all duration-300 cursor-pointer ${
-              isDark
-                ? "bg-white/5 border-white/10 text-white hover:bg-white/10 hover:border-cyan-500/40 hover:text-cyan-300"
-                : "bg-black/5 border-black/10 text-black hover:bg-black/10 hover:border-blue-500/40 hover:text-blue-600"
-            }`}
-          >
-            {isDark ? (
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
-              </svg>
-            ) : (
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <circle cx="12" cy="12" r="5" />
-                <line x1="12" y1="1" x2="12" y2="3" />
-                <line x1="12" y1="21" x2="12" y2="23" />
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-                <line x1="1" y1="12" x2="3" y2="12" />
-                <line x1="21" y1="12" x2="23" y2="12" />
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
-              </svg>
-            )}
-            <span>{isDark ? "Dark" : "Light"}</span>
-          </button>
+          {/* Navbar Links */}
+          <div className="flex items-center gap-6">
+            <Link
+              href="/login"
+              className={`text-sm font-semibold transition-colors ${
+                isDark
+                  ? "text-gray-300 hover:text-white"
+                  : "text-gray-600 hover:text-black"
+              }`}
+            >
+              Log in
+            </Link>
+
+            {/* Theme Toggle */}
+            <button
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold transition-all duration-300 cursor-pointer ${
+                isDark
+                  ? "bg-white/5 border-white/10 text-white hover:bg-white/10 hover:border-cyan-500/40 hover:text-cyan-300"
+                  : "bg-black/5 border-black/10 text-black hover:bg-black/10 hover:border-blue-500/40 hover:text-blue-600"
+              }`}
+            >
+              {isDark ? (
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
+                </svg>
+              ) : (
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <circle cx="12" cy="12" r="5" />
+                  <line x1="12" y1="1" x2="12" y2="3" />
+                  <line x1="12" y1="21" x2="12" y2="23" />
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                  <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                  <line x1="1" y1="12" x2="3" y2="12" />
+                  <line x1="21" y1="12" x2="23" y2="12" />
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                  <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+              )}
+              <span>{isDark ? "Dark" : "Light"}</span>
+            </button>
+          </div>
         </nav>
 
         {/* Hero */}

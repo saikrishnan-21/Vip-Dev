@@ -35,7 +35,17 @@ export default function AppLayout({ children }: LayoutProps) {
   useEffect(() => {
     if (loading) return;
     if (!user) {
-      router.push("/login");
+      router.replace("/login");
+      return;
+    }
+
+    if (!user.accountType) {
+      router.replace("/account-type");
+      return;
+    }
+
+    if (!user.onboardingCompleted) {
+      router.replace("/onboarding");
       return;
     }
 

@@ -10,16 +10,23 @@ import { IconBadge } from "@/components/ui/IconBadge";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
 import { ParticlesBackground } from "@/components/ParticlesBackground";
+import { getCurrentUser } from "@/api/api.service";
 
 const Login = () => {
   const router = useRouter();
   const { user, loading, login } = useAuth();
   const { effectiveTheme, theme, setTheme } = useTheme();
 
-  // If user is already logged in, redirect to dashboard
+  // If user is already logged in, smart redirect based on their progress
   useEffect(() => {
     if (!loading && user) {
-      router.replace("/dashboard");
+      if (!user.accountType) {
+        router.replace("/account-type");
+      } else if (!user.onboardingCompleted) {
+        router.replace("/onboarding");
+      } else {
+        router.replace("/dashboard");
+      }
     }
   }, [user, loading, router]);
 
@@ -56,7 +63,15 @@ const Login = () => {
     try {
       const result = await login(email, password);
       if (result.success) {
-        router.replace("/dashboard");
+        // Smart redirect: check user's onboarding progress
+        const freshUser = getCurrentUser();
+        if (!freshUser?.accountType) {
+          router.replace("/account-type");
+        } else if (!freshUser?.onboardingCompleted) {
+          router.replace("/onboarding");
+        } else {
+          router.replace("/dashboard");
+        }
       } else {
         setError({
           email: "",

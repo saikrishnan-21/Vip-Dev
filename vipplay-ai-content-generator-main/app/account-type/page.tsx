@@ -17,10 +17,16 @@ const AccountType = () => {
 
   const isDark = effectiveTheme === "dark";
 
-  // Protection: if not logged in, go to login
+  // Protection: redirect based on current state
   useEffect(() => {
-    if (!loading && !user) {
-      router.replace("/login");
+    if (!loading) {
+      if (!user) {
+        router.replace("/login");
+      } else if (user.onboardingCompleted) {
+        router.replace("/dashboard");
+      } else if (user.accountType) {
+        router.replace("/onboarding");
+      }
     }
   }, [user, loading, router]);
 
@@ -33,7 +39,8 @@ const AccountType = () => {
     try {
       // Step 1: Update account type
       const response = await authAPI.updateAccountType(type);
-
+      // TEMP DEBUG - remove after fixing
+      console.log("updateAccountType raw response:", response);
       if (!response.success) {
         setError(response.message || "Failed to update account type");
         return;

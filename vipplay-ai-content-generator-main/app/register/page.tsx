@@ -23,10 +23,16 @@ const Signup = () => {
   const { user, loading, register } = useAuth();
   const { effectiveTheme, theme, setTheme } = useTheme();
 
-  // If user is already logged in, redirect to dashboard
+  // If user is already logged in, redirect based on progress
   useEffect(() => {
     if (!loading && user) {
-      router.replace("/dashboard");
+      if (!user.accountType) {
+        router.replace("/account-type");
+      } else if (!user.onboardingCompleted) {
+        router.replace("/onboarding");
+      } else {
+        router.replace("/dashboard");
+      }
     }
   }, [user, loading, router]);
 
