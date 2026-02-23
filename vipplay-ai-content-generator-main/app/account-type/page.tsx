@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { User, Building2 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -10,12 +10,21 @@ import { useTheme } from "@/contexts/ThemeContext";
 
 const AccountType = () => {
   const router = useRouter();
-  const { updateUser, refreshUser } = useAuth();
+  const { user, loading, updateUser, refreshUser } = useAuth();
   const { effectiveTheme, theme, setTheme } = useTheme();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
   const isDark = effectiveTheme === "dark";
+
+  // Protection: if not logged in, go to login
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace("/login");
+    }
+  }, [user, loading, router]);
+
+  if (loading || !user) return null;
 
   const handleSelect = async (type: "individual" | "organization") => {
     setIsLoading(true);

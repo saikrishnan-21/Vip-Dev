@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -20,8 +20,15 @@ import { ParticlesBackground } from "@/components/ParticlesBackground";
 
 const Signup = () => {
   const router = useRouter();
-  const { register } = useAuth();
+  const { user, loading, register } = useAuth();
   const { effectiveTheme, theme, setTheme } = useTheme();
+
+  // If user is already logged in, redirect to dashboard
+  useEffect(() => {
+    if (!loading && user) {
+      router.replace("/dashboard");
+    }
+  }, [user, loading, router]);
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");

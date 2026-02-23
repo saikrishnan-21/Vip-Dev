@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { GradientButton } from "@/components/ui/GradientButton";
 import { GradientInput } from "@/components/ui/GradientInput";
@@ -61,10 +61,24 @@ const RoleBadge = ({ isDark }: { isDark: boolean }) => {
 
 export default function Onboarding() {
   const router = useRouter();
-  const { user, refreshUser } = useAuth();
+  const { user, loading, refreshUser } = useAuth();
   const { effectiveTheme, theme, setTheme } = useTheme();
 
   const isDark = effectiveTheme === "dark";
+
+  // Protection: if not logged in, go to login
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace("/login");
+    }
+  }, [user, loading, router]);
+
+  const [step, setStep] = useState<Step>(1);
+  const [showLaunchModal, setShowLaunchModal] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string>("");
+
+  if (loading || !user) return null;
 
   const accountType =
     user?.accountType ||
@@ -73,11 +87,6 @@ export default function Onboarding() {
       : null) ||
     "individual";
   const userRole = "admin";
-
-  const [step, setStep] = useState<Step>(1);
-  const [showLaunchModal, setShowLaunchModal] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState<string>("");
 
   const [profile, setProfile] = useState({
     brandName: "",

@@ -8,7 +8,14 @@ Handles content safety checks for image generation:
 import re
 import logging
 from typing import Dict, Any, Optional, Tuple
-from transformers import pipeline
+try:
+    from transformers import pipeline
+    HAS_TRANSFORMERS = True
+except ImportError:
+    HAS_TRANSFORMERS = False
+    logger = logging.getLogger(__name__)
+    logger.warning("transformers not installed. Image safety checks will be disabled.")
+
 import httpx
 from PIL import Image
 import io

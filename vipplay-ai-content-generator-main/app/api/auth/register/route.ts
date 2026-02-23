@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
-import bcrypt from 'bcryptjs';
-import { getDatabase, Collections } from '@/lib/mongodb';
-import { registerSchema } from '@/lib/validations/auth';
-import { User, UserPublic, RegisterResponse } from '@/lib/types/user';
-import { z } from 'zod';
+import { NextRequest, NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
+import { getDatabase, Collections } from "@/lib/mongodb";
+import { registerSchema } from "@/lib/validations/auth";
+import { User, UserPublic, RegisterResponse } from "@/lib/types/user";
+import { generateToken } from "@/lib/auth/jwt";
+import { z } from "zod";
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,9 +27,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          message: 'User with this email already exists',
+          message: "User with this email already exists",
         } as RegisterResponse,
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -37,23 +38,30 @@ export async function POST(request: NextRequest) {
 
     // Create user document
     const now = new Date();
-    const newUser: Omit<User, '_id'> = {
+    const newUser: Omit<User, "_id"> = {
       email: validatedData.email.toLowerCase(),
       password: hashedPassword,
       fullName: validatedData.fullName,
-      role: 'user', // Default role
+      role: "user", // Default role
       createdAt: now,
       updatedAt: now,
       preferences: {
-        theme: 'system',
+        theme: "system",
         emailNotifications: true,
-        defaultTone: 'Professional',
+        defaultTone: "Professional",
         defaultWordCount: 1500,
       },
     };
 
     // Insert user into database
     const result = await usersCollection.insertOne(newUser as User);
+
+    // Generate JWT token (same as login — so the client is authenticated immediately)
+    const token = generateToken({
+      userId: result.insertedId.toString(),
+      email: newUser.email,
+      role: newUser.role,
+    });
 
     // Create public user object (without password)
     const userPublic: UserPublic = {
@@ -65,30 +73,31 @@ export async function POST(request: NextRequest) {
       preferences: newUser.preferences,
     };
 
-    // Return success response
+    // Return success response WITH token so client can authenticate immediately
     return NextResponse.json(
       {
         success: true,
-        message: 'User registered successfully',
+        message: "User registered successfully",
         user: userPublic,
+        token,
       } as RegisterResponse,
-      { status: 201 }
+      { status: 201 },
     );
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error("Registration error:", error);
 
     // Handle Zod validation errors
     if (error instanceof z.ZodError) {
       return NextResponse.json(
         {
           success: false,
-          message: 'Validation failed',
+          message: "Validation failed",
           errors: error.errors.map((err) => ({
-            field: err.path.join('.'),
+            field: err.path.join("."),
             message: err.message,
           })),
         },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -96,9 +105,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        message: 'An error occurred during registration',
+        message: "An error occurred during registration",
       } as RegisterResponse,
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

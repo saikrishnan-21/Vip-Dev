@@ -1,233 +1,256 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import {
-  LayoutDashboard,
-  FileText,
-  CheckSquare,
-  Settings,
-  LogOut,
-  Target,
-  Moon,
-  Sun,
-  ImageIcon,
-  Search,
-  PlusCircle,
-  Database,
-  Users,
-} from "lucide-react";
-import { NavLink } from "@/components/NavLink";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTheme } from "@/contexts/ThemeContext";
-import { useSidebar } from "@/contexts/SidebarContext";
-import { cn } from "@/lib/utils";
 
 interface SidebarProps {
+  open: boolean;
+  onClose: () => void;
   primaryColor?: string;
   secondaryColor?: string;
   brandName?: string;
 }
 
-const mainNavigation = [
-  { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Content", href: "/dashboard/content", icon: CheckSquare },
-  { name: "Knowledge Base", href: "/dashboard/knowledge-base", icon: Database },
-  { name: "Media Library", href: "/dashboard/media", icon: ImageIcon },
-];
-
-const generationNavigation = [
-  { name: "Generate", href: "/dashboard/generate", icon: PlusCircle },
-  { name: "AI Configuration", href: "/dashboard/ai-config", icon: Settings },
+const navigationItems = [
+  {
+    id: "overview",
+    label: "Overview",
+    path: "/dashboard",
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="7" height="7" rx="1" />
+        <rect x="14" y="3" width="7" height="7" rx="1" />
+        <rect x="3" y="14" width="7" height="7" rx="1" />
+        <rect x="14" y="14" width="7" height="7" rx="1" />
+      </svg>
+    ),
+  },
+  {
+    id: "generate",
+    label: "Generate Content",
+    path: "/dashboard/generate",
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 20h9" />
+        <path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z" />
+      </svg>
+    ),
+  },
+  {
+    id: "media",
+    label: "Media Library",
+    path: "/dashboard/media",
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" />
+        <circle cx="8.5" cy="8.5" r="1.5" />
+        <polyline points="21 15 16 10 5 21" />
+      </svg>
+    ),
+  },
+  {
+    id: "content",
+    label: "Content",
+    path: "/dashboard/content",
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+        <polyline points="14 2 14 8 20 8" />
+        <line x1="16" y1="13" x2="8" y2="13" />
+        <line x1="16" y1="17" x2="8" y2="17" />
+        <polyline points="10 9 9 9 8 9" />
+      </svg>
+    ),
+  },
+  {
+    id: "settings",
+    label: "Settings",
+    path: "/dashboard/settings",
+    icon: (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="3" />
+        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" />
+      </svg>
+    ),
+  },
 ];
 
 export default function Sidebar({
-  primaryColor = "#22d3ee",
-  secondaryColor = "#3b82f6",
-  brandName = "VIP AI",
+  open,
+  onClose,
+  primaryColor = "#1389E9",
+  secondaryColor = "#0EEDCD",
+  brandName = "My Brand",
 }: SidebarProps) {
-  const { user, logout, isSuperAdmin } = useAuth();
+  const router   = useRouter();
+  const pathname = usePathname();
+  const { user, logout }             = useAuth();
   const { effectiveTheme, theme, setTheme } = useTheme();
-  const { sidebarOpen: open, toggleSidebar: onClose } = useSidebar();
+
   const isDark = effectiveTheme === "dark";
+  const grad   = `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`;
+
+  // Match active tab — most-specific path wins
+  const activeTab =
+    [...navigationItems]
+      .sort((a, b) => b.path.length - a.path.length)
+      .find((item) => pathname.startsWith(item.path))?.id ?? "overview";
 
   return (
-    <aside
-      className={cn(
-        "fixed inset-y-0 left-0 z-50 w-72 transition-transform duration-300 transform lg:static lg:translate-x-0",
-        open ? "translate-x-0" : "-translate-x-full",
-        isDark ? "bg-[#0b0e1a] border-white/5" : "bg-white border-slate-200",
-        "border-r flex flex-col pt-4",
-      )}
-    >
-      {/* Brand */}
-      <div className="px-6 mb-8">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden">
-            <img
-              src="/assets/logo-icon.png"
-              alt="FuzeBox Logo"
-              className="w-full h-full object-contain"
-              onError={(e) => {
-                // Fallback to icon if image not found
-                e.currentTarget.style.display = "none";
-                e.currentTarget.parentElement?.classList.add(
-                  "bg-gradient-to-br",
-                  "from-cyan-400",
-                  "to-blue-600",
-                );
-                const span = document.createElement("span");
-                span.className = "text-white font-bold text-xl";
-                span.innerText = "F";
-                e.currentTarget.parentElement?.appendChild(span);
-              }}
-            />
-          </div>
-          <div className="flex flex-col">
-            <span
-              className={cn(
-                "text-xl font-black tracking-tight leading-none",
-                isDark ? "text-white" : "text-slate-900",
-              )}
-            >
-              FuzeBox
-            </span>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-cyan-500">
-              Content Studio
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Nav groups */}
-      <div className="flex-1 px-4 space-y-8 overflow-y-auto pb-4">
-        <div>
-          <h3
-            className={cn(
-              "px-4 mb-3 text-xs font-semibold uppercase tracking-wider",
-              isDark ? "text-gray-500" : "text-gray-400",
-            )}
-          >
-            Main Menu
-          </h3>
-          <div className="space-y-1">
-            {mainNavigation.map((item) => (
-              <NavLink
-                key={item.name}
-                href={item.href}
-                className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium",
-                  isDark
-                    ? "text-gray-400 hover:text-white hover:bg-white/5"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-50",
-                )}
-                activeClassName={cn(
-                  isDark
-                    ? "bg-white/10 text-cyan-400"
-                    : "bg-cyan-50 text-cyan-600 shadow-sm shadow-cyan-500/10",
-                )}
-              >
-                <item.icon className="w-5 h-5" />
-                {item.name}
-              </NavLink>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <h3
-            className={cn(
-              "px-4 mb-3 text-xs font-semibold uppercase tracking-wider",
-              isDark ? "text-gray-500" : "text-gray-400",
-            )}
-          >
-            AI Tools
-          </h3>
-          <div className="space-y-1">
-            {generationNavigation.map((item) => (
-              <NavLink
-                key={item.name}
-                href={item.href}
-                className={cn(
-                  "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium",
-                  isDark
-                    ? "text-gray-400 hover:text-white hover:bg-white/5"
-                    : "text-slate-600 hover:text-slate-900 hover:bg-slate-50",
-                )}
-                activeClassName={cn(
-                  isDark
-                    ? "bg-white/10 text-cyan-400"
-                    : "bg-cyan-50 text-cyan-600 shadow-sm shadow-cyan-500/10",
-                )}
-              >
-                <item.icon className="w-5 h-5" />
-                {item.name}
-              </NavLink>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* User info & Settings */}
-      <div
-        className={cn(
-          "mt-auto p-4 mx-4 mb-6 rounded-2xl border",
-          isDark ? "bg-white/5 border-white/5" : "bg-slate-50 border-slate-100",
-        )}
+    <>
+      <aside
+        className={`
+          fixed top-0 left-0 h-screen w-[260px] z-50
+          flex flex-col
+          border-r transition-transform duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)]
+          font-sans
+          ${isDark ? "bg-blue-500/5 border-[#1c2333]" : "bg-white border-gray-200"}
+          ${open ? "translate-x-0" : "-translate-x-[260px]"}
+        `}
       >
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-cyan-400 to-blue-500 flex items-center justify-center text-white font-bold">
-            {user?.fullName?.charAt(0) || user?.email?.charAt(0).toUpperCase()}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p
-              className={cn(
-                "text-sm font-semibold truncate",
-                isDark ? "text-white" : "text-slate-900",
-              )}
-            >
-              {user?.fullName || "User"}
-            </p>
-            <p
-              className={cn(
-                "text-xs truncate",
-                isDark ? "text-gray-500" : "text-gray-400",
-              )}
-            >
-              {user?.email}
-            </p>
-          </div>
+        {/* ─── Logo ─── */}
+        <div
+          className={`px-5 pt-5 pb-[18px] border-b flex items-center cursor-pointer ${
+            isDark ? "border-[#1c2333]" : "border-gray-200"
+          }`}
+          onClick={() => router.push("/dashboard")}
+        >
+          <img
+            src={isDark ? "/assets/logo-white.png" : "/assets/logo-dark.png"}
+            alt="FuzeBox"
+            className="h-[10vh] w-auto object-contain block rounded-md"
+          />
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t border-white/5 gap-2">
+        {/* ─── Navigation ─── */}
+        <nav className="flex-1 px-[10px] py-3 overflow-y-auto">
+          <ul className="list-none m-0 p-0 flex flex-col gap-0.5">
+            {navigationItems.map((item) => {
+              const isActive = activeTab === item.id;
+              return (
+                <li key={item.id}>
+                  <button
+                    onClick={() => {
+                      router.push(item.path);
+                      if (typeof window !== "undefined" && window.innerWidth < 1024) onClose();
+                    }}
+                    className={`
+                      group w-full flex items-center gap-[11px] px-[13px] py-[9px]
+                      rounded-lg border-none cursor-pointer text-left
+                      text-[13.5px] transition-all duration-150 relative
+                      ${
+                        isActive
+                          ? `font-semibold tracking-tight ${isDark ? "bg-[#1c2333] text-white" : "bg-gray-100 text-gray-900"}`
+                          : `font-normal ${isDark ? "text-gray-500 hover:bg-[#161b27] hover:text-gray-200" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"}`
+                      }
+                    `}
+                  >
+                    {/* Active indicator bar */}
+                    {isActive && (
+                      <span
+                        className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-[3px]"
+                        style={{ background: grad }}
+                      />
+                    )}
+
+                    {/* Icon — inherits hover color from parent button */}
+                    <span
+                      className="flex items-center flex-shrink-0 leading-none transition-colors duration-150"
+                      style={{ color: isActive ? primaryColor : "inherit" }}
+                    >
+                      {item.icon}
+                    </span>
+
+                    <span className="leading-none">{item.label}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+
+        {/* ─── User Footer ─── */}
+        <div className={`px-[10px] pt-3 pb-4 border-t ${isDark ? "border-[#1c2333]" : "border-gray-200"}`}>
+          {/* User info row */}
+          <div className={`flex items-center gap-[10px] px-3 py-2 rounded-lg mb-1 ${isDark ? "bg-[#111827]" : "bg-gray-50"}`}>
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-[13px] flex-shrink-0 tracking-tight"
+              style={{ background: grad }}
+            >
+              {brandName.charAt(0).toUpperCase()}
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className={`text-[12.5px] font-semibold truncate leading-[1.4] ${isDark ? "text-gray-200" : "text-gray-900"}`}>
+                {user?.email || "demo@vipcontentai.com"}
+              </div>
+              <div className={`text-[11px] leading-[1.3] ${isDark ? "text-gray-600" : "text-gray-500"}`}>
+                {user?.accountType}
+              </div>
+            </div>
+          </div>
+
+          {/* Theme toggle */}
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className={cn(
-              "p-2 rounded-lg transition-colors duration-200 flex-1 flex justify-center",
-              isDark
-                ? "bg-white/5 hover:bg-white/10 text-cyan-400"
-                : "bg-slate-100 hover:bg-slate-200 text-slate-600",
-            )}
+            className={`
+              w-full flex items-center gap-[9px] px-[13px] py-2
+              rounded-lg border-none cursor-pointer text-[13px]
+              transition-all duration-150 mb-0.5
+              ${isDark
+                ? "bg-transparent text-gray-500 hover:bg-[#161b27] hover:text-gray-200"
+                : "bg-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900"}
+            `}
           >
-            {isDark ? (
-              <Sun className="w-5 h-5" />
-            ) : (
-              <Moon className="w-5 h-5" />
-            )}
+            <span className="flex items-center leading-none">
+              {theme === "dark" ? (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="5" />
+                  <line x1="12" y1="1" x2="12" y2="3" /><line x1="12" y1="21" x2="12" y2="23" />
+                  <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" /><line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                  <line x1="1" y1="12" x2="3" y2="12" /><line x1="21" y1="12" x2="23" y2="12" />
+                  <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" /><line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                </svg>
+              ) : (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z" />
+                </svg>
+              )}
+            </span>
+            <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
           </button>
+
+          {/* Sign out */}
           <button
-            onClick={logout}
-            className={cn(
-              "p-2 rounded-lg transition-colors duration-200 flex-1 flex justify-center text-red-500",
-              isDark
-                ? "bg-white/5 hover:bg-red-500/10"
-                : "bg-slate-100 hover:bg-red-50",
-            )}
+            onClick={() => { logout(); router.push("/login"); }}
+            className={`
+              w-full flex items-center gap-[9px] px-[13px] py-2
+              rounded-lg border-none cursor-pointer text-[13px]
+              transition-all duration-150
+              ${isDark
+                ? "bg-transparent text-gray-500 hover:bg-red-500/10 hover:text-red-400"
+                : "bg-transparent text-gray-600 hover:bg-red-50 hover:text-red-500"}
+            `}
           >
-            <LogOut className="w-5 h-5" />
+            <span className="flex items-center leading-none">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+            </span>
+            <span>Sign Out</span>
           </button>
         </div>
-      </div>
-    </aside>
+      </aside>
+
+      {/* Mobile overlay */}
+      {open && (
+        <div
+          onClick={onClose}
+          className="fixed inset-0 bg-black/60 z-40 backdrop-blur-sm lg:hidden"
+        />
+      )}
+    </>
   );
 }

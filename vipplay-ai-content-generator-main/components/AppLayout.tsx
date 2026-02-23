@@ -16,13 +16,15 @@ interface ProfileData {
 }
 
 interface LayoutProps {
-  children: ReactNode;
+  children:
+    | ReactNode
+    | ((sidebarOpen: boolean, toggleSidebar: () => void) => ReactNode);
 }
 
 export default function AppLayout({ children }: LayoutProps) {
   const { effectiveTheme } = useTheme();
   const { user, loading } = useAuth();
-  const { sidebarOpen, setSidebarOpen, toggleSidebar } = useSidebar();
+  const { sidebarOpen, setSidebarOpen } = useSidebar();
   const router = useRouter();
   const [profile, setProfile] = useState<ProfileData>({
     brandName: "FuzeBox",
@@ -95,57 +97,23 @@ export default function AppLayout({ children }: LayoutProps) {
       )}
     >
       <Sidebar
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
         primaryColor={profile.primaryColor}
         secondaryColor={profile.secondaryColor}
         brandName={profile.brandName}
       />
 
-      {/* Mobile Backdrop */}
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden animate-in fade-in duration-300"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      <div className="flex-1 flex flex-col min-h-screen overflow-hidden relative">
-        {/* Toggle button for mobile */}
-        {!sidebarOpen && (
-          <div className="lg:hidden p-4 border-b border-white/5 bg-transparent sticky top-0 z-40 backdrop-blur-sm flex items-center gap-3">
-            <button
-              onClick={toggleSidebar}
-              className={cn(
-                "p-2 rounded-xl flex items-center justify-center border",
-                isDark
-                  ? "bg-white/5 border-white/10 text-white"
-                  : "bg-white border-slate-200 text-slate-900",
-              )}
-            >
-              <img
-                src="/assets/logo-icon.png"
-                alt="FuzeBox"
-                className="w-6 h-6 object-contain"
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                  const fallback = e.currentTarget.parentElement;
-                  if (fallback)
-                    fallback.innerHTML =
-                      '<div class="w-6 h-6 flex items-center justify-center font-bold text-xs">F</div>';
-                }}
-              />
-            </button>
-            <span
-              className={cn(
-                "font-black tracking-tight",
-                isDark ? "text-white" : "text-slate-900",
-              )}
-            >
-              FuzeBox
-            </span>
-          </div>
+      <div
+        className={cn(
+          "flex-1 flex flex-col min-h-screen overflow-hidden relative transition-all duration-[250ms] ease-[cubic-bezier(0.4,0,0.2,1)]",
+          sidebarOpen ? "ml-[260px]" : "ml-0",
         )}
+      >
         <main className="flex-1 relative overflow-y-auto overflow-x-hidden">
-          {children}
+          {typeof children === "function"
+            ? children(sidebarOpen, () => setSidebarOpen(!sidebarOpen))
+            : children}
         </main>
       </div>
     </div>

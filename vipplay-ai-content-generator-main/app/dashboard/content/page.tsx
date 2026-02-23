@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTheme } from "@/contexts/ThemeContext";
-import AppLayout from "@/components/AppLayout";
-import { useSidebar } from "@/contexts/SidebarContext";
+import { contentAPI } from "@/api/api.service";
 import {
   FileText,
   Search,
@@ -21,6 +20,8 @@ import {
   Calendar,
   Layers,
   Info,
+  Clock,
+  ArrowUpDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -41,18 +42,50 @@ interface ContentItem {
   category: string;
 }
 
-const STATUS_COLORS = {
-  draft: "text-slate-500 bg-slate-500/10 border-slate-500/20",
-  review: "text-amber-500 bg-amber-500/10 border-amber-500/20",
-  approved: "text-emerald-500 bg-emerald-500/10 border-emerald-500/20",
-  published: "text-cyan-500 bg-cyan-500/10 border-cyan-500/20",
-  rejected: "text-red-500 bg-red-500/10 border-red-500/20",
-  archived: "text-slate-400 bg-slate-400/10 border-slate-400/20",
+const STATUS_CONFIG: Record<
+  string,
+  { bg: string; text: string; dot: string; label: string }
+> = {
+  draft: {
+    bg: "bg-gray-500/10",
+    text: "text-gray-500",
+    dot: "bg-gray-500",
+    label: "Draft",
+  },
+  review: {
+    bg: "bg-amber-500/10",
+    text: "text-amber-500",
+    dot: "bg-amber-500",
+    label: "In Review",
+  },
+  approved: {
+    bg: "bg-emerald-500/10",
+    text: "text-emerald-500",
+    dot: "bg-emerald-500",
+    label: "Approved",
+  },
+  published: {
+    bg: "bg-blue-500/10",
+    text: "text-blue-500",
+    dot: "bg-blue-500",
+    label: "Published",
+  },
+  rejected: {
+    bg: "bg-red-500/10",
+    text: "text-red-500",
+    dot: "bg-red-500",
+    label: "Rejected",
+  },
+  archived: {
+    bg: "bg-gray-500/5",
+    text: "text-gray-400",
+    dot: "bg-gray-400",
+    label: "Archived",
+  },
 };
 
 export default function ContentLibrary() {
   const { effectiveTheme } = useTheme();
-  const { sidebarOpen } = useSidebar();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [selectedArticles, setSelectedArticles] = useState<string[]>([]);
@@ -67,48 +100,21 @@ export default function ContentLibrary() {
       setProfile(p);
     }
 
-    // Simulate fetching content
-    setTimeout(() => {
-      setArticles([
-        {
-          _id: "1",
-          title: "The Future of AI Content Generation",
-          status: "published",
-          wordCount: 1250,
-          seoScore: 94,
-          createdAt: "2024-02-15",
-          category: "Technology",
-        },
-        {
-          _id: "2",
-          title: "10 Tips for Better Prompt Engineering",
-          status: "approved",
-          wordCount: 850,
-          seoScore: 88,
-          createdAt: "2024-02-18",
-          category: "Tutorial",
-        },
-        {
-          _id: "3",
-          title: "Why Sustainable Energy Matters",
-          status: "review",
-          wordCount: 1500,
-          seoScore: 91,
-          createdAt: "2024-02-20",
-          category: "Environment",
-        },
-        {
-          _id: "4",
-          title: "Modern Web Design Trends 2024",
-          status: "draft",
-          wordCount: 1100,
-          seoScore: 75,
-          createdAt: "2024-02-20",
-          category: "Design",
-        },
-      ]);
-      setLoading(false);
-    }, 1000);
+    const fetchContent = async () => {
+      try {
+        setLoading(true);
+        const resp = await contentAPI.getContent();
+        if (resp.success && resp.content) {
+          setArticles(resp.content);
+        }
+      } catch (error) {
+        console.error("Failed to fetch content:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContent();
   }, []);
 
   const primaryColor = profile?.primaryColor || "#1389E9";
@@ -122,358 +128,319 @@ export default function ContentLibrary() {
     );
   };
 
+  const filteredArticles = articles.filter((a) => {
+    const matchesSearch = a.title
+      .toLowerCase()
+      .includes(searchQuery.toLowerCase());
+    const matchesStatus = filterStatus === "all" || a.status === filterStatus;
+    return matchesSearch && matchesStatus;
+  });
+
+  const cardCls = `rounded-2xl border transition-all ${isDark ? "bg-gray-800/30 border-gray-700" : "bg-white border-gray-100 shadow-sm"} p-4`;
+  const inputCls = `w-full pl-11 pr-4 py-2.5 rounded-xl border outline-none transition-all font-alliance ${isDark ? "bg-[#0a0e1a] border-gray-700 text-white placeholder-gray-600 focus:border-blue-500" : "bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-blue-400"}`;
+
   return (
-    <AppLayout>
-      <main
-        style={{ transition: "margin-left 0.3s ease" }}
-        className={cn("flex-1 overflow-auto", sidebarOpen ? "lg:ml-0" : "ml-0")}
+    <div className="flex-1 overflow-y-auto">
+      {/* Header */}
+      <header
+        className={`border-b px-8 py-8 ${isDark ? "bg-[#0a0e1a] border-gray-800" : "bg-white border-gray-200"}`}
       >
-        {/* Header */}
-        <header
-          className={cn(
-            "sticky top-0 z-30 px-8 py-6 border-b backdrop-blur-md flex flex-col md:flex-row md:items-center justify-between gap-6",
-            isDark
-              ? "bg-[#0a0e1a]/80 border-white/5"
-              : "bg-white/80 border-slate-100 shadow-sm",
-          )}
-        >
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
             <h1
-              className={cn(
-                "text-2xl font-bold",
-                isDark ? "text-white" : "text-slate-900",
-              )}
+              className={`text-3xl font-bold mb-1 ${isDark ? "text-white" : "text-gray-900"}`}
             >
               Content Management
             </h1>
             <p
-              className={cn(
-                "text-sm",
-                isDark ? "text-slate-400" : "text-slate-500",
-              )}
+              className={`font-alliance ${isDark ? "text-gray-500" : "text-gray-600"}`}
             >
-              Review, manage, and refine your generated articles
+              Review, manage, and scale your brand's digital presence
             </p>
           </div>
-
           <div className="flex items-center gap-3">
-            <div
-              className={cn(
-                "relative group w-full md:w-64",
-                isDark ? "text-slate-500" : "text-slate-400",
-              )}
-            >
+            <div className="relative group w-full md:w-72">
               <Search
-                size={16}
-                className="absolute left-4 top-1/2 -translate-y-1/2"
+                size={18}
+                className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
               />
               <input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search articles..."
-                className={cn(
-                  "w-full pl-12 pr-6 py-2.5 rounded-xl border-2 outline-none text-sm font-medium transition-all",
-                  isDark
-                    ? "bg-white/5 border-white/5 focus:border-cyan-500/50"
-                    : "bg-slate-50 border-slate-100 focus:border-cyan-500/50",
-                )}
+                className={inputCls}
               />
             </div>
             <button
-              className={cn(
-                "p-3 rounded-xl border-2 transition-all",
-                isDark
-                  ? "bg-white/5 border-white/5 hover:border-white/10 text-slate-400"
-                  : "bg-slate-50 border-slate-100 hover:border-slate-200 text-slate-500",
-              )}
+              className={`p-3 rounded-xl border transition-all ${isDark ? "bg-gray-800 border-gray-700 text-gray-400 hover:text-white" : "bg-white border-gray-200 text-gray-500 hover:text-gray-900"}`}
             >
               <Filter size={18} />
             </button>
           </div>
-        </header>
+        </div>
+      </header>
 
-        <div className="p-8 max-w-7xl mx-auto space-y-8">
-          {/* Quick Stats */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                label: "Total Articles",
-                value: articles.length,
-                icon: Layers,
-                color: "text-cyan-500",
-              },
-              {
-                label: "Pending Review",
-                value: articles.filter((a) => a.status === "review").length,
-                icon: Clock,
-                color: "text-amber-500",
-              },
-              {
-                label: "Approved",
-                value: articles.filter((a) => a.status === "approved").length,
-                icon: CheckCircle2,
-                color: "text-emerald-500",
-              },
-              {
-                label: "Published",
-                value: articles.filter((a) => a.status === "published").length,
-                icon: FileText,
-                color: "text-cyan-500",
-              },
-            ].map((stat) => (
-              <div
-                key={stat.label}
-                className={cn(
-                  "p-6 rounded-2xl border-2",
-                  isDark
-                    ? "bg-white/[0.02] border-white/5"
-                    : "bg-white border-slate-100 shadow-sm",
-                )}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <span
-                    className={cn(
-                      "text-[10px] font-black uppercase tracking-widest text-slate-500",
-                    )}
-                  >
-                    {stat.label}
-                  </span>
-                  <stat.icon size={16} className={stat.color} />
+      <div className="p-8 max-w-[1400px] mx-auto space-y-8">
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            {
+              label: "Total Articles",
+              value: articles.length,
+              icon: Layers,
+              color: "text-blue-500",
+              bg: "bg-blue-500/10",
+            },
+            {
+              label: "Pending Review",
+              value: articles.filter((a) => a.status === "review").length,
+              icon: Clock,
+              color: "text-amber-500",
+              bg: "bg-amber-500/10",
+            },
+            {
+              label: "Approved Items",
+              value: articles.filter((a) => a.status === "approved").length,
+              icon: CheckCircle2,
+              color: "text-emerald-500",
+              bg: "bg-emerald-500/10",
+            },
+            {
+              label: "Published Now",
+              value: articles.filter((a) => a.status === "published").length,
+              icon: FileText,
+              color: "text-purple-500",
+              bg: "bg-purple-500/10",
+            },
+          ].map((stat) => (
+            <div key={stat.label} className={cardCls}>
+              <div className="flex items-center p-2 justify-between mb-4">
+                <div className={`p-2 rounded-lg ${stat.bg} ${stat.color}`}>
+                  <stat.icon size={18} />
                 </div>
-                <p
-                  className={cn(
-                    "text-2xl font-black",
-                    isDark ? "text-white" : "text-slate-900",
-                  )}
+                <span
+                  className={`text-[10px] font-black uppercase tracking-widest text-gray-500`}
                 >
-                  {stat.value}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          {/* Bulk Actions Bar */}
-          {selectedArticles.length > 0 && (
-            <div
-              className={cn(
-                "px-6 py-4 rounded-2xl border-2 flex items-center justify-between gap-6 animate-in slide-in-from-bottom-4",
-                isDark
-                  ? "bg-cyan-500/10 border-cyan-500/20"
-                  : "bg-cyan-50 border-cyan-500/20 shadow-lg shadow-cyan-500/5",
-              )}
-            >
-              <div className="flex items-center gap-4">
-                <span className="text-sm font-black text-cyan-500 uppercase tracking-widest">
-                  {selectedArticles.length} Selected
+                  Overview
                 </span>
               </div>
-              <div className="flex items-center gap-3">
-                <button className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-bold uppercase transition-all flex items-center gap-2">
-                  <Download size={14} /> Export
-                </button>
-                <button className="px-4 py-2 rounded-lg bg-emerald-500 text-white text-xs font-bold uppercase transition-all flex items-center gap-2">
-                  <CheckCircle2 size={14} /> Approve
-                </button>
-                <button className="px-4 py-2 rounded-lg bg-red-500/10 hover:bg-red-500 hover:text-white text-red-500 text-xs font-bold uppercase transition-all">
-                  <Trash2 size={14} />
-                </button>
-              </div>
+              <p
+                className={`text-2xl font-bold ${isDark ? "text-white" : "text-gray-900"} px-2`}
+              >
+                {stat.value}
+              </p>
+              <p
+                className={`text-xs font-alliance ${isDark ? "text-gray-500" : "text-gray-400"}`}
+              >
+                {stat.label}
+              </p>
             </div>
-          )}
+          ))}
+        </div>
 
-          {/* Content Table/Grid */}
+        {/* Bulk Actions */}
+        {selectedArticles.length > 0 && (
           <div
-            className={cn(
-              "rounded-3xl border-2 overflow-hidden",
-              isDark
-                ? "bg-white/[0.02] border-white/5"
-                : "bg-white border-slate-100 shadow-xl shadow-slate-200/40",
-            )}
+            className={`px-6 py-4 rounded-2xl border flex items-center justify-between animate-in fade-in slide-in-from-top-4 duration-300 ${isDark ? "bg-blue-500/10 border-blue-500/20" : "bg-blue-50 border-blue-100 shadow-lg shadow-blue-500/5"}`}
           >
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr
-                    className={cn(
-                      "border-b text-[10px] font-black uppercase tracking-[0.2em]",
-                      isDark
-                        ? "border-white/5 text-slate-500"
-                        : "border-slate-50 text-slate-400",
-                    )}
-                  >
-                    <th className="px-8 py-5 w-16">
-                      <input
-                        type="checkbox"
-                        checked={selectedArticles.length === articles.length}
-                        onChange={() =>
-                          setSelectedArticles(
-                            selectedArticles.length === articles.length
-                              ? []
-                              : articles.map((a) => a._id),
-                          )
-                        }
-                        className="w-4 h-4 rounded border-slate-300 accent-cyan-500"
-                      />
-                    </th>
-                    <th className="px-8 py-5">Article Title</th>
-                    <th className="px-8 py-5">Status</th>
-                    <th className="px-8 py-5">Word Count</th>
-                    <th className="px-8 py-5 text-center">SEO Score</th>
-                    <th className="px-8 py-5">Date</th>
-                    <th className="px-8 py-5 text-right">Actions</th>
-                  </tr>
-                </thead>
-                <tbody
-                  className={cn(
-                    "divide-y",
-                    isDark ? "divide-white/5" : "divide-slate-50",
-                  )}
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-bold">
+                {selectedArticles.length}
+              </div>
+              <span
+                className={`text-sm font-bold ${isDark ? "text-blue-400" : "text-blue-600"}`}
+              >
+                Articles Selected
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                className={`px-4 py-2 rounded-lg text-xs font-bold uppercase transition-all flex items-center gap-2 ${isDark ? "bg-gray-800 text-white hover:bg-gray-700" : "bg-white text-gray-700 hover:bg-gray-50 border"}`}
+              >
+                <Download size={14} /> Export
+              </button>
+              <button
+                className={`px-4 py-2 rounded-lg text-xs font-bold uppercase transition-all flex items-center gap-2 text-white hover:opacity-90`}
+                style={{ background: grad }}
+              >
+                <CheckCircle2 size={14} /> Approve All
+              </button>
+              <button
+                className={`p-2 rounded-lg bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all`}
+              >
+                <Trash2 size={16} />
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Main Table */}
+        <div className={cardCls}>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr
+                  className={`border-b text-[10px] font-black uppercase tracking-widest ${isDark ? "border-gray-700 text-gray-500" : "border-gray-50 text-gray-400"}`}
                 >
-                  {loading ? (
-                    [1, 2, 3, 4, 5].map((i) => (
-                      <tr key={i} className="animate-pulse">
-                        <td
-                          colSpan={7}
-                          className="px-8 py-6 h-16 bg-white/5 opacity-20 mr-4"
+                  <th className="px-8 py-5 w-16 text-center">
+                    <input
+                      type="checkbox"
+                      checked={
+                        selectedArticles.length === filteredArticles.length &&
+                        filteredArticles.length > 0
+                      }
+                      onChange={() =>
+                        setSelectedArticles(
+                          selectedArticles.length === filteredArticles.length
+                            ? []
+                            : filteredArticles.map((a) => a._id),
+                        )
+                      }
+                      className="w-4 h-4 rounded border-gray-300 accent-blue-500 cursor-pointer"
+                    />
+                  </th>
+                  <th className="px-6 py-5">Article Overview</th>
+                  <th className="px-6 py-5">Status</th>
+                  <th className="px-6 py-5">Engagement</th>
+                  <th className="px-6 py-5">Generated</th>
+                  <th className="px-6 py-5 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody
+                className={`divide-y ${isDark ? "divide-gray-800/50" : "divide-gray-50"}`}
+              >
+                {loading ? (
+                  [1, 2, 3, 4, 5].map((i) => (
+                    <tr key={i} className="animate-pulse">
+                      <td colSpan={6} className="px-8 py-8">
+                        <div
+                          className={`h-12 w-full rounded-xl ${isDark ? "bg-gray-800" : "bg-gray-100"}`}
                         />
-                      </tr>
-                    ))
-                  ) : articles.length === 0 ? (
-                    <tr>
-                      <td
-                        colSpan={7}
-                        className="px-8 py-20 text-center text-slate-500 font-bold uppercase tracking-widest opacity-30"
-                      >
-                        No content found
                       </td>
                     </tr>
-                  ) : (
-                    articles.map((article) => (
+                  ))
+                ) : filteredArticles.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="px-8 py-20 text-center opacity-40"
+                    >
+                      <div className="flex flex-col items-center gap-4">
+                        <Layers size={48} />
+                        <p className="font-bold uppercase tracking-widest text-sm">
+                          No content found
+                        </p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  filteredArticles.map((article) => {
+                    const status =
+                      STATUS_CONFIG[article.status] || STATUS_CONFIG.draft;
+                    return (
                       <tr
                         key={article._id}
-                        className={cn(
-                          "group hover:bg-cyan-500/[0.02] transition-colors cursor-pointer",
-                          selectedArticles.includes(article._id) &&
-                            (isDark ? "bg-cyan-500/5" : "bg-cyan-50/50"),
-                        )}
+                        className={`group transition-all ${selectedArticles.includes(article._id) ? (isDark ? "bg-blue-500/5" : "bg-blue-50/50") : "hover:bg-gray-800/10"}`}
                         onClick={() => toggleSelect(article._id)}
                       >
                         <td
-                          className="px-8 py-6"
+                          className="px-8 py-6 text-center"
                           onClick={(e) => e.stopPropagation()}
                         >
                           <input
                             type="checkbox"
                             checked={selectedArticles.includes(article._id)}
                             onChange={() => toggleSelect(article._id)}
-                            className="w-4 h-4 rounded border-slate-300 accent-cyan-500"
+                            className="w-4 h-4 rounded border-gray-300 accent-blue-500 cursor-pointer"
                           />
                         </td>
-                        <td className="px-8 py-6">
+                        <td className="px-6 py-6">
                           <div className="flex items-center gap-4">
-                            <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-500">
+                            <div
+                              className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${isDark ? "bg-gray-800 text-gray-400" : "bg-gray-50 text-gray-500 border border-gray-100"}`}
+                            >
                               <FileText size={18} />
                             </div>
-                            <div>
+                            <div className="min-w-0">
                               <p
-                                className={cn(
-                                  "text-sm font-bold truncate max-w-[300px]",
-                                  isDark ? "text-white" : "text-slate-900",
-                                )}
+                                className={`text-sm font-bold truncate max-w-[320px] ${isDark ? "text-white" : "text-gray-900"}`}
                               >
                                 {article.title}
                               </p>
-                              <p className="text-[10px] font-bold text-slate-500 mt-0.5">
-                                {article.category}
+                              <p className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter transition-all group-hover:text-blue-500">
+                                {article.category} · {article.wordCount} Words
                               </p>
                             </div>
                           </div>
                         </td>
-                        <td className="px-8 py-6">
+                        <td className="px-6 py-6">
                           <span
-                            className={cn(
-                              "text-[9px] font-black uppercase tracking-tighter px-2.5 py-1 rounded-full border",
-                              STATUS_COLORS[article.status],
-                            )}
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[9px] font-black uppercase tracking-tight ${status.bg} ${status.text} border border-current opacity-70`}
                           >
-                            {article.status}
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full ${status.dot}`}
+                            />
+                            {status.label}
                           </span>
                         </td>
-                        <td className="px-8 py-6 text-sm font-medium text-slate-500">
-                          {article.wordCount} words
-                        </td>
-                        <td className="px-8 py-6 text-center">
-                          <div className="inline-flex flex-col items-center">
-                            <span
-                              className={cn(
-                                "text-sm font-black",
-                                article.seoScore > 90
-                                  ? "text-emerald-500"
-                                  : article.seoScore > 70
-                                    ? "text-amber-500"
-                                    : "text-red-400",
-                              )}
+                        <td className="px-6 py-6">
+                          <div className="space-y-1.5">
+                            <div className="flex items-center justify-between text-[10px] font-bold text-gray-500 uppercase">
+                              <span>SEO Score</span>
+                              <span
+                                className={
+                                  article.seoScore > 80
+                                    ? "text-emerald-500"
+                                    : "text-amber-500"
+                                }
+                              >
+                                {article.seoScore}%
+                              </span>
+                            </div>
+                            <div
+                              className={`h-1 rounded-full overflow-hidden ${isDark ? "bg-gray-700" : "bg-gray-200"}`}
                             >
-                              {article.seoScore}
-                            </span>
-                            <div className="w-12 h-1 bg-slate-200 dark:bg-white/10 rounded-full mt-1 overflow-hidden">
                               <div
-                                className={cn(
-                                  "h-full",
-                                  article.seoScore > 90
-                                    ? "bg-emerald-500"
-                                    : "bg-amber-500",
-                                )}
+                                className={`h-full rounded-full transition-all duration-700 ${article.seoScore > 80 ? "bg-emerald-500" : "bg-amber-500"}`}
                                 style={{ width: `${article.seoScore}%` }}
                               />
                             </div>
                           </div>
                         </td>
-                        <td className="px-8 py-6 text-xs font-bold text-slate-400 uppercase tracking-tighter">
+                        <td className="px-6 py-6 font-alliance text-xs text-gray-500">
                           {article.createdAt}
                         </td>
                         <td
-                          className="px-8 py-6 text-right"
+                          className="px-6 py-6 text-right"
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button className="p-2 rounded-lg bg-white/10 hover:bg-cyan-500 text-slate-400 hover:text-white transition-all">
+                          <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                            <button
+                              className={`p-2 rounded-lg transition-all ${isDark ? "text-gray-400 hover:text-white hover:bg-gray-700" : "text-gray-400 hover:text-gray-900 hover:bg-gray-50"}`}
+                            >
+                              <Eye size={16} />
+                            </button>
+                            <button
+                              className={`p-2 rounded-lg transition-all ${isDark ? "text-gray-400 hover:text-white hover:bg-gray-700" : "text-gray-400 hover:text-gray-900 hover:bg-gray-50"}`}
+                            >
                               <Edit size={16} />
                             </button>
-                            <button className="p-2 rounded-lg bg-white/10 hover:bg-red-500 text-slate-400 hover:text-white transition-all">
+                            <button
+                              className={`p-2 rounded-lg transition-all ${isDark ? "text-gray-400 hover:text-red-500 hover:bg-red-500/10" : "text-gray-400 hover:text-red-500 hover:bg-red-50"}`}
+                            >
                               <Trash2 size={16} />
                             </button>
                           </div>
                         </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+                    );
+                  })
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
-      </main>
-    </AppLayout>
-  );
-}
-
-function Clock(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <polyline points="12 6 12 12 16 14" />
-    </svg>
+      </div>
+    </div>
   );
 }

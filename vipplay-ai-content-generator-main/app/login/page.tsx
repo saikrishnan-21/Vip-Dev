@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogIn, Eye, EyeOff } from "lucide-react";
@@ -13,8 +13,16 @@ import { ParticlesBackground } from "@/components/ParticlesBackground";
 
 const Login = () => {
   const router = useRouter();
-  const { login } = useAuth();
+  const { user, loading, login } = useAuth();
   const { effectiveTheme, theme, setTheme } = useTheme();
+
+  // If user is already logged in, redirect to dashboard
+  useEffect(() => {
+    if (!loading && user) {
+      router.replace("/dashboard");
+    }
+  }, [user, loading, router]);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState({
